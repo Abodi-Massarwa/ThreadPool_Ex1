@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 
 	  if (counter == 1024){
 		encrypt(data,key);
-		printf("encripted data: %s\n",data);
+		printf("Encrypted data: %s\n",data);
 		counter = 0;
 	  }
 	}
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 		lastData[0] = '\0';
 		strncat(lastData, data, counter);
 		encrypt(lastData,key);
-		printf("encripted data:\n %s\n",lastData);
+		printf("Encrypted data:\n %s\n",lastData);
 	}
 
 	return 0;
