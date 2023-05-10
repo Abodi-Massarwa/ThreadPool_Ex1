@@ -1,5 +1,50 @@
 #include "codec.h"
 #include <stdio.h>
+#include <pthread.h>
+/////////////////////////////////////////////////
+/*
+ * TODO create a structure to hold threads dynamically and assigns tasks to them
+ * TODO since we have no clue what the file size would be we cant create as many threads as we want
+ */
+typedef struct {
+    int m_id;
+    pthread_t m_thread;
+    my_thread* m_next;
+
+
+
+}my_thread;
+
+typedef struct {
+
+
+}my_thread_pool;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////
 
 int main(int argc, char *argv[])
 {
