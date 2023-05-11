@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
 		lastData[0] = '\0';
 		strncat(lastData, data, counter);
 		encrypt(lastData,key);
+        printf("original data:\n %s\n",data);
 		printf("Encrypted data:\n %s\n",lastData);
 	}
 
