@@ -21,6 +21,15 @@ typedef struct my_thread my_thread;
 my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
 
 ////// functions //////
+
+
+
+
+
+
+
+
+
 void start_multithreading(char indicator, int key, char* data, int char_count)
 {
     /// lets divide tasks for each thread based on how many chars we have
@@ -54,39 +63,42 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
         else
             printf("is not\n");
     }
-
-
-/// so now our indexes list is done a built well
-
-
-
-
-
-
-
-
-
 /*
  * TODO based on the char ('e' | 'd') we know whether its Encrypt or Decrypt to call
+ * /// so now our thread_list is ready
  */
     if (indicator=='e')
     {
+        for (int i = 0; i < LIST_SIZE; ++i) {
 
+            my_thread current_thread = thread_list[i];
+
+            if (current_thread.m_is_active == 1)/// means its active
+
+            {
+
+                pthread_create(&(thread_list[i].m_thread), NULL, thread_encrypt_function, &thread_list[i]);
+
+            }
+
+        }
     }
     else /// indicator='d'
     {
+        for (int i = 0; i < LIST_SIZE; ++i) {
 
+            my_thread current_thread = thread_list[i];
+
+            if (current_thread.m_is_active == 1)/// means its active
+
+            {
+
+                pthread_create(&(thread_list[i].m_thread), NULL, thread_decrypt_function, &thread_list[i]);
+
+            }
+
+        }
     }
-
-
-
-
-
-
-
-
-
-
 }
 
 
