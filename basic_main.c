@@ -10,6 +10,10 @@ pthread_mutex_t foo_mutex;
  * TODO create a structure to hold threads dynamically and assigns tasks to them
  * TODO since we have no clue what the file size would be we cant create as many threads as we want
  */
+#include <pthread.h>
+#include <stdio.h>
+#include <omp.h>
+
 typedef struct my_thread {
     int m_id;
     pthread_t m_thread;
@@ -63,12 +67,12 @@ int main(int argc, char *argv[])
     printf("id of thread 1 :%d",t1->m_id);
     printf("id of thread 1 %d",t1->m_thread);*/
 
-  pthread_t list[1000];
-    for (int i = 0; i < 1000; ++i) {
-        //pthread_mutex_lock(&foo_mutex);
-        pthread_create(&list[i],NULL,foo,(void*)&i);
-        //pthread_mutex_unlock(&foo_mutex);
-    }
+//  pthread_t list[1000];
+//    for (int i = 0; i < 1000; ++i) {
+//        //pthread_mutex_lock(&foo_mutex);
+//        pthread_create(&list[i],NULL,foo,(void*)&i);
+//        //pthread_mutex_unlock(&foo_mutex);
+//    }
   end_time=clock();
 
    execution_time = (double) (end_time - start_time) / CLOCKS_PER_SEC;
