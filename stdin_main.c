@@ -18,8 +18,22 @@ typedef struct my_thread my_thread;
 my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
 
 ////// functions //////
-void start_multithreading(char indicator, int key, char* data, int size)
+void start_multithreading(char indicator, int key, char* data, int char_count)
 {
+    /// lets divide tasks for each thread based on how many chars we have
+    //printf("length %ld\n",char_count);
+    char_count= strlen(data);
+
+
+
+
+
+
+
+
+
+
+
 /*
  * TODO based on the char ('e' | 'd') we know whether its Encrypt or Decrypt to call
  */
@@ -29,7 +43,7 @@ void start_multithreading(char indicator, int key, char* data, int size)
     }
     else /// indicator='d'
     {
-        
+
     }
 
 
@@ -124,7 +138,7 @@ int main(int argc, char *argv[])
 		char lastData[counter];
 		lastData[0] = '\0';
 		strncat(lastData, data, counter);
-        lastData[counter]='\0';
+        lastData[counter-1]='\0';
         //printf("lastdata[counter]=%c",lastData[counter]);
         char* action = argv[2];
         if(action[1]=='e') {
