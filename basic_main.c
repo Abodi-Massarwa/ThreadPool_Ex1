@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <time.h>
+
+pthread_mutex_t foo_mutex;
 /////////////////////////////////////////////////
 /*
  * TODO create a structure to hold threads dynamically and assigns tasks to them
@@ -22,9 +25,19 @@ typedef struct {
 
 }my_thread_pool;
 //////////////////////////////////////////////
-
+void* foo(void* id)
+{
+    pthread_mutex_lock(&foo_mutex);
+    int x= *((int*) id);
+    printf("\nThread Id : %d",x);
+    pthread_mutex_unlock(&foo_mutex);
+}
+pthread_mutex_t foo_mutex;
 int main(int argc, char *argv[])
 {
+    clock_t start_time, end_time;
+    double execution_time;
+    start_time=clock();
 //	char data[] = "Hello world";
 //	int key = 12;
 //
@@ -50,6 +63,16 @@ int main(int argc, char *argv[])
     printf("id of thread 1 :%d",t1->m_id);
     printf("id of thread 1 %d",t1->m_thread);*/
 
+  pthread_t list[1000];
+    for (int i = 0; i < 1000; ++i) {
+        //pthread_mutex_lock(&foo_mutex);
+        pthread_create(&list[i],NULL,foo,(void*)&i);
+        //pthread_mutex_unlock(&foo_mutex);
+    }
+  end_time=clock();
+
+   execution_time = (double) (end_time - start_time) / CLOCKS_PER_SEC;
+    printf("\nExecution time: %.6f seconds\n", execution_time);
 
 	return 0;
 }
