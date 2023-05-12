@@ -22,6 +22,8 @@ typedef struct my_thread my_thread;
 my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
 
 char our_string[MAX_SIZE]="\0";
+char result_string[MAX_SIZE]="\0";
+int our_key;
 
 void print_mythread_info(my_thread thread)
 {
@@ -41,7 +43,16 @@ void* thread_encrypt_function(void* thread)
 {
     my_thread current_thread= *((my_thread*) thread);
     print_mythread_info(current_thread);
+    size_t length= current_thread.m_end_index-current_thread.m_start_index+1;
+    char current_sub_string[length];
     /// now lets get to real work and call the desired function
+    strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
+    current_sub_string[length] = '\0';  // Add null terminator
+    encrypt(current_sub_string,our_key);
+    /// now append this to the global result string
+    strcat(result_string, current_sub_string);
+
+
 
 }
 
@@ -103,7 +114,7 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
 
             {
 
-                
+
                 pthread_create(&(thread_list[i].m_thread), NULL, thread_encrypt_function, &thread_list[i]);
 
             }
@@ -213,6 +224,7 @@ int main(int argc, char *argv[])
         //printf("lastdata[counter]=%c",lastData[counter]);
         char* action = argv[2];
         strcpy(our_string,lastData);
+        our_key=key;
         if(action[1]=='e') {
             printf("\nour string is :\n%s\n",lastData);
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
@@ -232,6 +244,9 @@ int main(int argc, char *argv[])
         data[counter]='\0'; // TODO to make sure the string is printed without extra garbage letters
 //        printf("original data:\n %s\n",data);
 //		printf("Encrypted data:\n %s\n",lastData);
+
+        printf("\nTHE GLOBAL RESULT STRING IS %s\n",result_string);
+        printf("the last char is %c",result_string[0]);
 	}
 
 	return 0;
