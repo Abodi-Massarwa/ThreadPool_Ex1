@@ -10,6 +10,8 @@
 
 struct my_thread{
     int m_id; // TODO assuming it helps us in the matter or putting back data in order after the multi-threading is done.
+    int m_start_index; /// since we are dealing with char* tasks can be divided by simply indexes
+    int m_end_index;
     pthread_t m_thread;
 };
 
@@ -21,8 +23,25 @@ my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
 void start_multithreading(char indicator, int key, char* data, int char_count)
 {
     /// lets divide tasks for each thread based on how many chars we have
-    //printf("length %ld\n",char_count);
     char_count= strlen(data);
+    int remainder=0;
+    int thread_portion = char_count/LIST_SIZE;
+    int index_counter=0;
+    if(char_count%LIST_SIZE!=0)
+        remainder= char_count%LIST_SIZE;
+    for (int i = 0; i < LIST_SIZE; ++i)
+    {
+     thread_list[i].m_start_index=index_counter;
+     index_counter=index_counter+thread_portion;
+     thread_list[i].m_end_index=index_counter-1;
+     if(i==0) {
+         thread_list[i].m_end_index += remainder;
+         index_counter += remainder;
+     }
+    }
+    //// done indexes divided to each thread;
+    
+
 
 
 
