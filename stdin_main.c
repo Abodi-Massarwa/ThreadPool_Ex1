@@ -28,9 +28,9 @@ void print_mythread_info(my_thread thread)
     printf("\nis active ?");
     if(thread.m_is_active==1)
     printf(" True");
-    else
+    else /// thats extra we dont even receive dead threads in this function.
         printf(" False");
-    printf("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    printf("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 }
 
 ////// functions //////
@@ -44,7 +44,8 @@ void* thread_encrypt_function(void* thread)
 
 void* thread_decrypt_function(void* thread)
 {
-
+    my_thread current_thread= *((my_thread*) thread);
+    print_mythread_info(current_thread);
 }
 
 
