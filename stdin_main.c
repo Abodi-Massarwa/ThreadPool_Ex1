@@ -20,10 +20,24 @@ typedef struct my_thread my_thread;
 
 my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
 
+void print_mythread_info(my_thread thread)
+{
+    printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    printf("\nthread_list[%d]",thread.m_id);
+    printf("\nstart index=%d , end index=%d",thread.m_start_index,thread.m_end_index);
+    printf("\nis active ?");
+    if(thread.m_is_active==1)
+    printf(" True");
+    else
+        printf(" False");
+    printf("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+}
+
 ////// functions //////
 void* thread_encrypt_function(void* thread)
 {
-    
+    my_thread current_thread= *((my_thread*) thread);
+    print_mythread_info(current_thread);
 }
 
 
