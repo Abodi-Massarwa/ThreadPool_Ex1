@@ -21,11 +21,17 @@ typedef struct my_thread my_thread;
 my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
 
 ////// functions //////
+void* thread_encrypt_function(void* thread)
+{
+    
+}
 
 
 
+void* thread_decrypt_function(void* thread)
+{
 
-
+}
 
 
 
