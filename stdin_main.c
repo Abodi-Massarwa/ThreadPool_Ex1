@@ -6,6 +6,7 @@
 ///////////////////////////////////
 ///// INITS //////
 #define LIST_SIZE 6
+#define MAX_SIZE 1024
 //pthread_t thread_list[LIST_SIZE];
 
 struct my_thread{
@@ -19,6 +20,8 @@ struct my_thread{
 typedef struct my_thread my_thread;
 
 my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
+
+char our_string[MAX_SIZE]="\0";
 
 void print_mythread_info(my_thread thread)
 {
@@ -38,6 +41,8 @@ void* thread_encrypt_function(void* thread)
 {
     my_thread current_thread= *((my_thread*) thread);
     print_mythread_info(current_thread);
+    /// now lets get to real work and call the desired function
+
 }
 
 
@@ -98,6 +103,7 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
 
             {
 
+                
                 pthread_create(&(thread_list[i].m_thread), NULL, thread_encrypt_function, &thread_list[i]);
 
             }
@@ -206,6 +212,7 @@ int main(int argc, char *argv[])
         lastData[counter-1]='\0';
         //printf("lastdata[counter]=%c",lastData[counter]);
         char* action = argv[2];
+        strcpy(our_string,lastData);
         if(action[1]=='e') {
             printf("\nour string is :\n%s\n",lastData);
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
