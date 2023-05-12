@@ -12,6 +12,7 @@ struct my_thread{
     int m_id; // TODO assuming it helps us in the matter or putting back data in order after the multi-threading is done.
     int m_start_index; /// since we are dealing with char* tasks can be divided by simply indexes
     int m_end_index;
+    int m_is_active; /// 1 active 0 not active
     pthread_t m_thread;
 };
 
@@ -25,25 +26,37 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
     /// lets divide tasks for each thread based on how many chars we have
     char_count= strlen(data);
     int remainder=0;
-    int thread_portion = char_count/LIST_SIZE;
+    int chunk_size = char_count / LIST_SIZE;
+    int current_char_number=char_count;
     int index_counter=0;
     if(char_count%LIST_SIZE!=0)
         remainder= char_count%LIST_SIZE;
     for (int i = 0; i < LIST_SIZE; ++i)
     {
-     thread_list[i].m_start_index=index_counter;
-     index_counter=index_counter+thread_portion;
-     thread_list[i].m_end_index=index_counter-1;
+        if(current_char_number!=0) {
+            thread_list[i].m_is_active=1;
+            thread_list[i].m_start_index=index_counter;
+            index_counter=index_counter+chunk_size;
+            thread_list[i].m_end_index=index_counter-1;
+            current_char_number-=chunk_size;
+        }
      if(i==0) {
          thread_list[i].m_end_index += remainder;
          index_counter += remainder;
+         current_char_number-=remainder;
      }
     }
     //// done indexes divided to each thread;
-    
+    for (int i = 0; i < LIST_SIZE; ++i) {
+        printf("thread[%d] : start index=%d ended index=%d \n",i,thread_list[i].m_start_index,thread_list[i].m_end_index);
+        if(thread_list[i].m_is_active==1)
+            printf("is active\n");
+        else
+            printf("is not\n");
+    }
 
 
-
+/// so now our indexes list is done a built well
 
 
 
