@@ -4,14 +4,44 @@
 #include <stdlib.h>
 #include <pthread.h>
 ///////////////////////////////////
+///// INITS //////
 #define LIST_SIZE 6
-pthread_t thread_list[LIST_SIZE];
+//pthread_t thread_list[LIST_SIZE];
+
+struct my_thread{
+    int m_id; // TODO assuming it helps us in the matter or putting back data in order after the multi-threading is done.
+    pthread_t m_thread;
+};
+
+typedef struct my_thread my_thread;
+
+my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
+
+////// functions //////
+void start_multithreading(char indicator, int key, char* data, int size)
+{
+/*
+ * TODO based on the char ('e' | 'd') we know whether its Encrypt or Decrypt to call
+ */
+    if (indicator=='e')
+    {
+
+    }
+    else /// indicator='d'
+    {
+        
+    }
 
 
 
 
 
 
+
+
+
+
+}
 
 
 
@@ -42,6 +72,20 @@ pthread_t thread_list[LIST_SIZE];
 /////////////////////////////////////
 int main(int argc, char *argv[])
 {
+    for (int i = 0; i < 6; ++i) {
+        /*
+         *TODO assigning id to each thread to override the auto-init trash values
+         * TODO regarding threads themselves tbh no one cares what values they hold . what matters the most
+         * TODO is to get them to work
+         */
+       thread_list[i].m_id=i;
+    }
+    /*
+     * get the threads to work using the relevant functions
+     * TODO 1) pthread_t_create
+     * TODO 2) pthread_t_join
+     * TODO etc....
+     */
 	if (argc < 3)
 	{
 	    printf("usage: key -[e|d] < file \n");
@@ -85,6 +129,8 @@ int main(int argc, char *argv[])
         char* action = argv[2];
         if(action[1]=='e') {
             printf("\nour string is :\n%s\n",lastData);
+            // TODO here we need to call pthread_t_create but before we need to divide the job on threads
+            start_multithreading('e',key,lastData,counter);
             encrypt(lastData, key);
             printf("Encrypted data:\n%s\n",lastData);
 //            decrypt(lastData,key);
@@ -92,6 +138,8 @@ int main(int argc, char *argv[])
         }
         else {// TODO "-d" as for Decrypt
             printf("\nour string is :\n%s\n",lastData);
+            // TODO here we need to call pthread_t_create but before we need to divide the job on threads
+            start_multithreading('d',key,lastData,counter);
             decrypt(lastData, key);
             printf("Decrypted data:\n%s\n",lastData);
         }

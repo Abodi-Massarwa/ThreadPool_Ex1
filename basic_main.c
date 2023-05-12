@@ -14,20 +14,20 @@ pthread_mutex_t foo_mutex;
 #include <stdio.h>
 #include <omp.h>
 
-typedef struct my_thread {
-    int m_id;
-    pthread_t m_thread;
-    struct my_thread* m_next;
-    char* m_task_line;
-
-
-
-}my_thread;
-
-typedef struct {
-    my_thread* m_head;
-
-}my_thread_pool;
+//typedef struct my_thread {
+//    int m_id;
+//    pthread_t m_thread;
+//    struct my_thread* m_next;
+//    char* m_task_line;
+//
+//
+//
+//}my_thread;
+//
+//typedef struct {
+//    my_thread* m_head;
+//
+//}my_thread_pool;
 //////////////////////////////////////////////
 void* foo(void* id)
 {
