@@ -325,3 +325,6 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+/*
+ * TODO i need to make sure each and every char[] is null terminated in my program.
+ */
