@@ -48,9 +48,9 @@ void* thread_encrypt_function(void* thread)
     ///TODO print_mythread_info(current_thread);
     size_t length= current_thread.m_end_index-current_thread.m_start_index+1;
     char current_sub_string[length];
-    current_sub_string[length-1]='\0';
+    current_sub_string[0]='\0';
     /// now lets get to real work and call the desired function
-    strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
+    strncpy(current_sub_string, our_string + current_thread.m_start_index, length-1);
     //current_sub_string[length] = '\0';  // Add null terminator
     //printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
     encrypt(current_sub_string,our_key);
@@ -59,8 +59,8 @@ void* thread_encrypt_function(void* thread)
 //    pthread_mutex_lock(&our_mutex);
 //    strcat(result_string, current_sub_string);
 //    pthread_mutex_unlock(&our_mutex);
-    ((my_thread*)thread)->m_string[(MAX_SIZE/LIST_SIZE)]='\0';
-    strcat(current_thread_ptr->m_string, current_sub_string); // copies each encrypted substring to the thread field
+    ///((my_thread*)thread)->m_string[0]='\0'; ///TODO this is not any good when its done by each thread we simply need to \0 the first
+    strcpy(current_thread_ptr->m_string, current_sub_string); // copies each encrypted substring to the thread field
     /// works but somehow the m_string is empty outside the function
     //printf("thread[%d]->m_sring=%s\n",current_thread.m_id,((my_thread*)thread)->m_string);
 
@@ -79,15 +79,15 @@ void* thread_decrypt_function(void* thread)
     my_thread current_thread=*((my_thread*)thread);
     size_t length= current_thread.m_end_index-current_thread.m_start_index+1;
     char current_sub_string[length];
-    current_sub_string[length-1]='\0';
+    current_sub_string[0]='\0';
     /// now lets get to real work and call the desired function
-    strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
+    strncpy(current_sub_string, our_string + current_thread.m_start_index, length-1);
     //current_sub_string[length] = '\0';  // Add null terminator
     //printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
     decrypt(current_sub_string,our_key);
 
-    ((my_thread*)thread)->m_string[(MAX_SIZE/LIST_SIZE)]='\0';
-    strcat(current_thread_ptr->m_string, current_sub_string);
+    //((my_thread*)thread)->m_string[0]='\0'; ///TODO this is not any good when its done by each thread we simply need to \0 the first
+    strcpy(current_thread_ptr->m_string, current_sub_string);
 
 
 }
@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
         our_key = key;
         ///printf("\nour string is :\n%s\n", lastData);
         if (action[1] == 'e') {
-            printf("\nour string is :\n%s\n", lastData);
+            printf("\nour string is :\n%s\n", lastData);// teken
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('e', key, lastData, counter);
             if(dev_mode) {
@@ -293,6 +293,7 @@ int main(int argc, char *argv[])
          * start appending each thread m_string to the global final result string to form our whole Encrypted/Decrypted string
          * (I could've done it without global since no such functions accessed it )
          */
+        //result_string[0]='\0';
         for (int i = 0; i < LIST_SIZE; ++i) {
             strcat(result_string, thread_list[i].m_string);
             //printf(" string of thread[%d] =%s", i, thread_list[i].m_string);
@@ -310,13 +311,21 @@ int main(int argc, char *argv[])
 
             printf("\nThe 1 threaded processed string is:\n%s\n\n",lastData);
             ////////////////////////////////EXTRA
-            //TODO DELELTE AFTER FINISH
-            decrypt(lastData,12);
-            printf("\nThe 1 threaded processed string is:\n%s\n\n",lastData);
-            printf("\n1)The multi threaded processed global string is:\n%s\n\n",result_string);
-            start_multithreading('d',key,result_string,counter);
+//            //TODO DELELTE AFTER FINISH
+//            decrypt(lastData,12);
+//            printf("\nThe 1 threaded decrypted non global string is:\n%s\n\n",lastData);
+//            printf("\n1)The multi threaded Eecrypted global string is:\n%s\n\n",result_string);
+//            start_multithreading('d',key,result_string,counter); /// TODO IMPORANT , IT DID NOTHING !!!!
+//            //// still need this important loop to append substrings of each threa to it
+//            result_string[0]='\0';
+//            for (int i = 0; i < LIST_SIZE; ++i) {
+//                strcat(result_string, thread_list[i].m_string);
+//                //printf(" string of thread[%d] =%s", i, thread_list[i].m_string);
+//
+//            }
+            //decrypt(result_string,12); //// TODO THIS THO SUCCEEDED
 
-            printf("\n2)The multi threaded processed global string is:\n%s\n\n",result_string);
+            //printf("\n2)The multi threaded processed global string is:\n%s\n\n",result_string);
             //////////////////////////////////////EXTRA
             if (strcmp(result_string, lastData) == 0)
                 printf("STRINGS EQUAL TO EXPECTED\n");
