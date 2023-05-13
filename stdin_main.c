@@ -52,7 +52,7 @@ void* thread_encrypt_function(void* thread)
     print_mythread_info(current_thread);
     size_t length= current_thread.m_end_index-current_thread.m_start_index+1;
     char current_sub_string[length];
-    current_sub_string[length]='\0';
+    current_sub_string[length-1]='\0';
     /// now lets get to real work and call the desired function
     strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
     current_sub_string[length] = '\0';  // Add null terminator
@@ -77,8 +77,23 @@ void* thread_encrypt_function(void* thread)
 
 void* thread_decrypt_function(void* thread)
 {
-    my_thread current_thread= *((my_thread*) thread);
-    print_mythread_info(current_thread);
+//    my_thread current_thread= *((my_thread*) thread);
+//    print_mythread_info(current_thread);
+    my_thread* current_thread_ptr=((my_thread*)thread);
+    my_thread current_thread=*((my_thread*)thread);
+    size_t length= current_thread.m_end_index-current_thread.m_start_index+1;
+    char current_sub_string[length];
+    current_sub_string[length-1]='\0';
+    /// now lets get to real work and call the desired function
+    strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
+    current_sub_string[length] = '\0';  // Add null terminator
+    printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
+    decrypt(current_sub_string,our_key);
+
+    ((my_thread*)thread)->m_string[(MAX_SIZE/LIST_SIZE)]='\0';
+    strcat(current_thread_ptr->m_string, current_sub_string);
+
+
 }
 
 
