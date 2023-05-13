@@ -46,13 +46,13 @@ void* thread_encrypt_function(void* thread)
     my_thread* current_thread_ptr=((my_thread*)thread);
     my_thread current_thread= *((my_thread*) thread);
     ///TODO print_mythread_info(current_thread);
-    size_t length= current_thread.m_end_index-current_thread.m_start_index+1;
-    char current_sub_string[length];
+    size_t length= current_thread_ptr->m_end_index-current_thread_ptr->m_start_index+1;
+    char current_sub_string[length+1]; /// TODO make sure to respect the existence of null terminator lad :')
     current_sub_string[0]='\0';
     /// now lets get to real work and call the desired function
-    strncpy(current_sub_string, our_string + current_thread.m_start_index, length-1);
+    strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
     //current_sub_string[length] = '\0';  // Add null terminator
-    //printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
+    //printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string); //////////////// TODO big problem .... no substrings for all threds .
     encrypt(current_sub_string,our_key);
     //printf("\nTHREAD[%d] substring after encryption= %s",current_thread.m_id,current_sub_string);
     /// now append this to the global result string
@@ -77,11 +77,11 @@ void* thread_decrypt_function(void* thread)
 //    print_mythread_info(current_thread);
     my_thread* current_thread_ptr=((my_thread*)thread);
     my_thread current_thread=*((my_thread*)thread);
-    size_t length= current_thread.m_end_index-current_thread.m_start_index+1;
-    char current_sub_string[length];
+    size_t length= current_thread_ptr->m_end_index-current_thread_ptr->m_start_index+1;
+    char current_sub_string[length+1];
     current_sub_string[0]='\0';
     /// now lets get to real work and call the desired function
-    strncpy(current_sub_string, our_string + current_thread.m_start_index, length-1);
+    strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
     //current_sub_string[length] = '\0';  // Add null terminator
     //printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
     decrypt(current_sub_string,our_key);
@@ -138,7 +138,7 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
         for (int i = 0; i < LIST_SIZE; ++i) {
 
             my_thread current_thread = thread_list[i];
-
+            //print_mythread_info(current_thread); ///TODO seems working fine !!! every singe required thread is working according to the partitioning mechanism i impl'd
             if (current_thread.m_is_active == 1)/// means its active
 
             {
@@ -242,22 +242,22 @@ int main(int argc, char *argv[])
 	 */
 	if (counter > 0) {
 
-        char lastData[counter];
+        char lastData[counter+1];
         lastData[0] = '\0';
         strncat(lastData, data, counter);
-        lastData[counter - 1] = '\0';
+        lastData[counter] = '\0';
         //printf("lastdata[counter]=%c",lastData[counter]);
         char *action = argv[2];
         strcpy(our_string, lastData);
         our_key = key;
-        ///printf("\nour string is :\n%s\n", lastData);
         if (action[1] == 'e') {
-            printf("\nour string is :\n%s\n", lastData);// teken
+            //printf("\nour string is :\n%s\n", lastData);// teken
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('e', key, lastData, counter);
             if(dev_mode) {
+                printf("\nour original string is :\n%s\n", lastData);
                 encrypt(lastData, key);
-                //printf("Encrypted data:\n%s\n", lastData);
+                printf("Encrypted classic data:\n%s\n", lastData);
             }
 //            decrypt(lastData,key);
 //            printf("Decrypted data:\n%s\n",lastData);
@@ -265,11 +265,13 @@ int main(int argc, char *argv[])
             //printf("\nour string is :\n%s\n", lastData);
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('d', key, lastData, counter);
-            if(dev_mode)
-            decrypt(lastData, key);
-            //printf("Decrypted data:\n%s\n", lastData);
+            if(dev_mode) {
+                printf("\nour original string is :\n%s\n", lastData);
+                decrypt(lastData, key);
+                printf("Decrypted classic data:\n%s\n", lastData);
+            }
         }
-        data[counter-1] = '\0'; // TODO to make sure the string is printed without extra garbage letters
+        data[counter] = '\0'; // TODO to make sure the string is printed without extra garbage letters
 //        printf("original data:\n %s\n",data);
 //		printf("Encrypted data:\n %s\n",lastData);
 
@@ -311,21 +313,8 @@ int main(int argc, char *argv[])
 
             printf("\nThe 1 threaded processed string is:\n%s\n\n",lastData);
             ////////////////////////////////EXTRA
-//            //TODO DELELTE AFTER FINISH
-//            decrypt(lastData,12);
-//            printf("\nThe 1 threaded decrypted non global string is:\n%s\n\n",lastData);
-//            printf("\n1)The multi threaded Eecrypted global string is:\n%s\n\n",result_string);
-//            start_multithreading('d',key,result_string,counter); /// TODO IMPORANT , IT DID NOTHING !!!!
-//            //// still need this important loop to append substrings of each threa to it
-//            result_string[0]='\0';
-//            for (int i = 0; i < LIST_SIZE; ++i) {
-//                strcat(result_string, thread_list[i].m_string);
-//                //printf(" string of thread[%d] =%s", i, thread_list[i].m_string);
-//
-//            }
-            //decrypt(result_string,12); //// TODO THIS THO SUCCEEDED
 
-            //printf("\n2)The multi threaded processed global string is:\n%s\n\n",result_string);
+            //printf("\n2)The multithreaded processed global string is:\n%s\n\n",result_string);
             //////////////////////////////////////EXTRA
             if (strcmp(result_string, lastData) == 0)
                 printf("STRINGS EQUAL TO EXPECTED\n");
