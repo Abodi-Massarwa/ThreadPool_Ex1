@@ -51,7 +51,7 @@ void* thread_encrypt_function(void* thread)
     current_sub_string[length-1]='\0';
     /// now lets get to real work and call the desired function
     strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
-    current_sub_string[length] = '\0';  // Add null terminator
+    //current_sub_string[length] = '\0';  // Add null terminator
     //printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
     encrypt(current_sub_string,our_key);
     //printf("\nTHREAD[%d] substring after encryption= %s",current_thread.m_id,current_sub_string);
@@ -82,7 +82,7 @@ void* thread_decrypt_function(void* thread)
     current_sub_string[length-1]='\0';
     /// now lets get to real work and call the desired function
     strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
-    current_sub_string[length] = '\0';  // Add null terminator
+    //current_sub_string[length] = '\0';  // Add null terminator
     //printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
     decrypt(current_sub_string,our_key);
 
@@ -268,7 +268,7 @@ int main(int argc, char *argv[])
             decrypt(lastData, key);
             //printf("Decrypted data:\n%s\n", lastData);
         }
-        data[counter] = '\0'; // TODO to make sure the string is printed without extra garbage letters
+        data[counter-1] = '\0'; // TODO to make sure the string is printed without extra garbage letters
 //        printf("original data:\n %s\n",data);
 //		printf("Encrypted data:\n %s\n",lastData);
 
