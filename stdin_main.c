@@ -45,14 +45,14 @@ void* thread_encrypt_function(void* thread)
      */
     my_thread* current_thread_ptr=((my_thread*)thread);
     my_thread current_thread= *((my_thread*) thread);
-    print_mythread_info(current_thread);
+    ///TODO print_mythread_info(current_thread);
     size_t length= current_thread.m_end_index-current_thread.m_start_index+1;
     char current_sub_string[length];
     current_sub_string[length-1]='\0';
     /// now lets get to real work and call the desired function
     strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
     current_sub_string[length] = '\0';  // Add null terminator
-    printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
+    //printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
     encrypt(current_sub_string,our_key);
     //printf("\nTHREAD[%d] substring after encryption= %s",current_thread.m_id,current_sub_string);
     /// now append this to the global result string
@@ -83,7 +83,7 @@ void* thread_decrypt_function(void* thread)
     /// now lets get to real work and call the desired function
     strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
     current_sub_string[length] = '\0';  // Add null terminator
-    printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
+    //printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
     decrypt(current_sub_string,our_key);
 
     ((my_thread*)thread)->m_string[(MAX_SIZE/LIST_SIZE)]='\0';
@@ -99,7 +99,7 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
 {
     /// lets divide tasks for each thread based on how many chars we have
     char_count= strlen(data);
-    printf("\nchar counter is : %d\n",char_count);
+    //printf("\nchar counter is : %d\n",char_count);
     int remainder=0;
     int chunk_size = char_count / LIST_SIZE;
     int current_char_number=char_count;
@@ -122,13 +122,13 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
      }
     }
     //// done indexes divided to each thread;
-    for (int i = 0; i < LIST_SIZE; ++i) {
+    /*TODO for (int i = 0; i < LIST_SIZE; ++i) {
         printf("thread[%d] : start index=%d ended index=%d \n",i,thread_list[i].m_start_index,thread_list[i].m_end_index);
         if(thread_list[i].m_is_active==1)
             printf("is active\n");
         else
             printf("is not\n");
-    }
+    }*/
 /*
  * TODO based on the char ('e' | 'd') we know whether its Encrypt or Decrypt to call
  * /// so now our thread_list is ready
@@ -169,33 +169,7 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+////////////////MAIN//////////////////
 /////////////////////////////////////
 int main(int argc, char *argv[])
 
@@ -205,6 +179,8 @@ int main(int argc, char *argv[])
     double execution_time;
     start_time=clock();
     /////////////////////////
+    int dev_mode=0;
+    ////////////////////////
     for (int i = 0; i < 6; ++i) {
         /*
          *TODO assigning id to each thread to override the auto-init trash values
@@ -225,31 +201,18 @@ int main(int argc, char *argv[])
 	    printf("!! data more than 1024 char will be ignored !!\n");
 	    return 0;
 	}
+    if(argc==4)/// for testing purposes
+    dev_mode=1;
 
 	int key = atoi(argv[1]);
-	printf("key is %i \n",key);
+	//printf("key is %i \n",key);
 
 	char c;
     char input_indicator;
 	int counter = 0;
 	int dest_size = 1024;
 	char data[dest_size];
-    /*
-     * if (isatty(fileno(stdin))) {
-        // Input is not redirected, read from command line
-        printf("Enter input from command line:\n");
-        int c;
-        while ((c = getchar()) != '\n') {
-            // Process input from command line
-        }
-    } else {
-        // Input is redirected, read from the redirected file
-        printf("Reading input from redirected file:\n");
-        int c;
-        while ((c = getchar()) != EOF) {
-            // Process input from redirected file
-        }
-     */
+
     if (isatty(fileno(stdin))) {
         // Input is not redirected, read from command line
         printf("Enter input from command line:\n");
@@ -287,11 +250,12 @@ int main(int argc, char *argv[])
         char *action = argv[2];
         strcpy(our_string, lastData);
         our_key = key;
-        printf("\nour string is :\n%s\n", lastData);
+        ///printf("\nour string is :\n%s\n", lastData);
         if (action[1] == 'e') {
             //printf("\nour string is :\n%s\n", lastData);
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('e', key, lastData, counter);
+            if(dev_mode)
             encrypt(lastData, key);
             //printf("Encrypted data:\n%s\n", lastData);
 //            decrypt(lastData,key);
@@ -300,6 +264,7 @@ int main(int argc, char *argv[])
             //printf("\nour string is :\n%s\n", lastData);
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('d', key, lastData, counter);
+            if(dev_mode)
             decrypt(lastData, key);
             //printf("Decrypted data:\n%s\n", lastData);
         }
@@ -316,28 +281,42 @@ int main(int argc, char *argv[])
 //        }
 
         /*
-         * join threads
+         * join threads (last station)
          */
         for (int i = 0; i < LIST_SIZE; ++i) {
             if (thread_list[i].m_is_active == 1)
                 if (pthread_join(thread_list[i].m_thread, NULL) != 0)
                     printf("ERROR JOINING THREAD [%d]", i);
         }
+        /*
+         * start appending each thread m_string to the global final result string to form our whole Encrypted/Decrypted string
+         * (I could've done it without global since no such functions accessed it )
+         */
         for (int i = 0; i < LIST_SIZE; ++i) {
-            strcat(result_string,thread_list[i].m_string);
-            printf(" string of thread[%d] =%s",i,thread_list[i].m_string);
+            strcat(result_string, thread_list[i].m_string);
+            //printf(" string of thread[%d] =%s", i, thread_list[i].m_string);
 
         }
-        printf("\nTHE GLOBAL RESULT STRING IS %s\n", result_string);
-        printf("\nTHE lastdata STRING IS %s\n", lastData);
-        if (strcmp(result_string, lastData) == 0)
-            printf("STRINGS EQUAL TO EXPECTED\n");
-        else {
-            printf("STRINGS NOT EQUAL\n");
+        /*
+         * Printing the final result
+         */
+        if (action[1] == 'e')
+            printf("\nthe Encrypted string is:\n%s\n", result_string);
+        else //// means 'd'
+            printf("\nthe Decrypted string is:\n%s\n", result_string);
+        //printf("\nTHE lastdata STRING IS %s\n", lastData);
+        if(dev_mode) {
+            printf("\nThe 1 threaded processed string is:\n%s\n\n",lastData);
+            if (strcmp(result_string, lastData) == 0)
+                printf("STRINGS EQUAL TO EXPECTED\n");
+            else {
+                printf("STRINGS NOT EQUAL\n");
 
+            }
         }
-
     }
+
+
     ////// section for complexity print in ms
     end_time=clock();
 
