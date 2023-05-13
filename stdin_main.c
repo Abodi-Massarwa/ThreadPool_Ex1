@@ -252,12 +252,13 @@ int main(int argc, char *argv[])
         our_key = key;
         ///printf("\nour string is :\n%s\n", lastData);
         if (action[1] == 'e') {
-            //printf("\nour string is :\n%s\n", lastData);
+            printf("\nour string is :\n%s\n", lastData);
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('e', key, lastData, counter);
-            if(dev_mode)
-            encrypt(lastData, key);
-            //printf("Encrypted data:\n%s\n", lastData);
+            if(dev_mode) {
+                encrypt(lastData, key);
+                //printf("Encrypted data:\n%s\n", lastData);
+            }
 //            decrypt(lastData,key);
 //            printf("Decrypted data:\n%s\n",lastData);
         } else {// TODO "-d" as for Decrypt
@@ -300,13 +301,23 @@ int main(int argc, char *argv[])
         /*
          * Printing the final result
          */
-        if (action[1] == 'e')
-            printf("\nthe Encrypted string is:\n%s\n", result_string);
-        else //// means 'd'
-            printf("\nthe Decrypted string is:\n%s\n", result_string);
-        //printf("\nTHE lastdata STRING IS %s\n", lastData);
         if(dev_mode) {
+        if (action[1] == 'e')
+            printf("\nthe Encrypted multi-threaded string is:\n%s\n", result_string);
+        else //// means 'd'
+            printf("\nthe Decrypted multi-threaded string is:\n%s\n", result_string);
+        //printf("\nTHE lastdata STRING IS %s\n", lastData);
+
             printf("\nThe 1 threaded processed string is:\n%s\n\n",lastData);
+            ////////////////////////////////EXTRA
+            //TODO DELELTE AFTER FINISH
+            decrypt(lastData,12);
+            printf("\nThe 1 threaded processed string is:\n%s\n\n",lastData);
+            printf("\n1)The multi threaded processed global string is:\n%s\n\n",result_string);
+            start_multithreading('d',key,result_string,counter);
+
+            printf("\n2)The multi threaded processed global string is:\n%s\n\n",result_string);
+            //////////////////////////////////////EXTRA
             if (strcmp(result_string, lastData) == 0)
                 printf("STRINGS EQUAL TO EXPECTED\n");
             else {
@@ -321,10 +332,12 @@ int main(int argc, char *argv[])
     end_time=clock();
 
     execution_time = (double) (end_time - start_time) / CLOCKS_PER_SEC;
+    if(dev_mode)
     printf("\nExecution time: %.6f seconds\n", execution_time);
 
 ////////////////////////////
-
+/// we simply print the plain result itself to make it flexible for multiple redirections ... < > <>
+    printf("%s", result_string);
 	return 0;
 }
 /*
