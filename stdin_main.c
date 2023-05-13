@@ -122,7 +122,8 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
             {
 
 
-                pthread_create(&(thread_list[i].m_thread), NULL, thread_encrypt_function, &thread_list[i]);
+                if(pthread_create(&(thread_list[i].m_thread), NULL, thread_encrypt_function, &thread_list[i])!=0)
+                    printf("ERROR CREATING THREAD[%d]",i);
 
             }
 
@@ -138,7 +139,8 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
 
             {
 
-                pthread_create(&(thread_list[i].m_thread), NULL, thread_decrypt_function, &thread_list[i]);
+                if(pthread_create(&(thread_list[i].m_thread), NULL, thread_decrypt_function, &thread_list[i])!=0)
+                    printf("ERROR CREATING THREAD[%d]",i);
 
             }
 
@@ -174,7 +176,10 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
 
 /////////////////////////////////////
 int main(int argc, char *argv[])
+
 {
+    pthread_mutex_init(&our_mutex,NULL);
+
     for (int i = 0; i < 6; ++i) {
         /*
          *TODO assigning id to each thread to override the auto-init trash values
@@ -255,6 +260,15 @@ int main(int argc, char *argv[])
         printf("\nTHE GLOBAL RESULT STRING IS %s\n",result_string);
         printf("the last char is %c",result_string[0]);
 	}
+    /*
+     * join threads
+     */
+    for (int i = 0; i < LIST_SIZE; ++i) {
+        if(thread_list[i].m_is_active==1)
+            if(pthread_join(thread_list[i].m_thread,NULL)!=0)
+                printf("ERROR JOINING THREAD [%d]",i);
+    }
+    pthread_mutex_destroy(&our_mutex);
 
 	return 0;
 }
