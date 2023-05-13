@@ -244,8 +244,8 @@ int main(int argc, char *argv[])
 
         char lastData[counter+1];
         lastData[0] = '\0';
-        strncat(lastData, data, counter);
-        lastData[counter] = '\0';
+        strcat(lastData, data);
+        lastData[counter] = '\0'; /// double-checked no need for more headaches
         //printf("lastdata[counter]=%c",lastData[counter]);
         char *action = argv[2];
         strcpy(our_string, lastData);
