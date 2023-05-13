@@ -9,7 +9,6 @@
 #define LIST_SIZE 6
 #define MAX_SIZE 1024
 //pthread_t thread_list[LIST_SIZE];
-pthread_mutex_t our_mutex;
 struct my_thread{
     int m_id; // TODO assuming it helps us in the matter or putting back data in order after the multi-threading is done.
     int m_start_index; /// since we are dealing with char* tasks can be divided by simply indexes
@@ -209,13 +208,7 @@ int main(int argc, char *argv[])
     clock_t start_time, end_time;
     double execution_time;
     start_time=clock();
-
-
-
-
-
-    pthread_mutex_init(&our_mutex,NULL);
-
+    /////////////////////////
     for (int i = 0; i < 6; ++i) {
         /*
          *TODO assigning id to each thread to override the auto-init trash values
@@ -318,8 +311,9 @@ int main(int argc, char *argv[])
             printf("STRINGS EQUAL TO EXPECTED\n");
         else {
             printf("STRINGS NOT EQUAL\n");
+
         }
-        pthread_mutex_destroy(&our_mutex);
+
     }
     ////// section for complexity print in ms
     end_time=clock();
@@ -327,7 +321,7 @@ int main(int argc, char *argv[])
     execution_time = (double) (end_time - start_time) / CLOCKS_PER_SEC;
     printf("\nExecution time: %.6f seconds\n", execution_time);
 
-
+////////////////////////////
 
 	return 0;
 }
