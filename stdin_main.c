@@ -8,7 +8,7 @@
 #define LIST_SIZE 6
 #define MAX_SIZE 1024
 //pthread_t thread_list[LIST_SIZE];
-
+pthread_mutex_t our_mutex;
 struct my_thread{
     int m_id; // TODO assuming it helps us in the matter or putting back data in order after the multi-threading is done.
     int m_start_index; /// since we are dealing with char* tasks can be divided by simply indexes
@@ -41,6 +41,11 @@ void print_mythread_info(my_thread thread)
 ////// functions //////
 void* thread_encrypt_function(void* thread)
 {
+    /*
+     *  i just realized we need to give each thread its own char[] to prevent shared variables and race conditions
+     *  and to not use mutex which is gonna be costy
+     *  TODO 1) lets give each thread its own char[]
+     */
     my_thread current_thread= *((my_thread*) thread);
     print_mythread_info(current_thread);
     size_t length= current_thread.m_end_index-current_thread.m_start_index+1;
@@ -50,7 +55,9 @@ void* thread_encrypt_function(void* thread)
     current_sub_string[length] = '\0';  // Add null terminator
     encrypt(current_sub_string,our_key);
     /// now append this to the global result string
+    pthread_mutex_lock(&our_mutex);
     strcat(result_string, current_sub_string);
+    pthread_mutex_unlock(&our_mutex);
 
 
 
