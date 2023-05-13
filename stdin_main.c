@@ -4,11 +4,11 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
+#include <unistd.h>
 ///////////////////////////////////
 ///// INITS //////
 #define LIST_SIZE 6
 #define MAX_SIZE 1024
-//pthread_t thread_list[LIST_SIZE];
 struct my_thread{
     int m_id; // TODO assuming it helps us in the matter or putting back data in order after the multi-threading is done.
     int m_start_index; /// since we are dealing with char* tasks can be divided by simply indexes
@@ -17,15 +17,13 @@ struct my_thread{
     char m_string[(MAX_SIZE/LIST_SIZE)+1]; /// worst case scenario each thread holds 1024/6 chars
     pthread_t m_thread;
 };
-
 typedef struct my_thread my_thread;
-
+//////////////////// GLOBAL VARIABLES SECTION ////////////////////////////////
 my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
-
 char our_string[MAX_SIZE]={0};
 char result_string[MAX_SIZE]={0};
 int our_key;
-
+////////////////////////////// functions //////////////////////////////////
 void print_mythread_info(my_thread thread)
 {
     //printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -38,8 +36,6 @@ void print_mythread_info(my_thread thread)
         printf(" False");
     printf("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 }
-
-////// functions //////
 void* thread_encrypt_function(void* thread)
 {
     /*
@@ -225,7 +221,7 @@ int main(int argc, char *argv[])
      */
 	if (argc < 3)
 	{
-	    printf("usage: key -[e|d] < file \n");
+	    printf("usage: key -[e|d] < file OR stream \n");
 	    printf("!! data more than 1024 char will be ignored !!\n");
 	    return 0;
 	}
@@ -234,15 +230,40 @@ int main(int argc, char *argv[])
 	printf("key is %i \n",key);
 
 	char c;
+    char input_indicator;
 	int counter = 0;
 	int dest_size = 1024;
-	char data[dest_size]; 
-	
-
-	while (((c = getchar()) != EOF) &&(counter != 1024))
-	{
-	  data[counter] = c;
-	  counter++;
+	char data[dest_size];
+    /*
+     * if (isatty(fileno(stdin))) {
+        // Input is not redirected, read from command line
+        printf("Enter input from command line:\n");
+        int c;
+        while ((c = getchar()) != '\n') {
+            // Process input from command line
+        }
+    } else {
+        // Input is redirected, read from the redirected file
+        printf("Reading input from redirected file:\n");
+        int c;
+        while ((c = getchar()) != EOF) {
+            // Process input from redirected file
+        }
+     */
+    if (isatty(fileno(stdin))) {
+        // Input is not redirected, read from command line
+        printf("Enter input from command line:\n");
+//        while ((c = getchar()) != '\n') {
+//            // Process input from command line
+//        }
+            input_indicator='\n';
+    }
+    else {
+        input_indicator = EOF;
+    }
+        while (((c = getchar()) != input_indicator) && (counter != 1024)) {
+            data[counter] = c;
+            counter++;
 
 //	  if (counter == 1024){
 //          break;
@@ -250,7 +271,8 @@ int main(int argc, char *argv[])
 //		printf("Encrypted data: %s\n",data);
 //		counter = 0;
 //	  }
-	}
+        }
+
 	/*
 	 * after we exit the loop we need to make sure whether the text reached the maximum length
 	 * or simply because the file ended and the counter isn't 1024
@@ -265,20 +287,21 @@ int main(int argc, char *argv[])
         char *action = argv[2];
         strcpy(our_string, lastData);
         our_key = key;
+        printf("\nour string is :\n%s\n", lastData);
         if (action[1] == 'e') {
-            printf("\nour string is :\n%s\n", lastData);
+            //printf("\nour string is :\n%s\n", lastData);
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('e', key, lastData, counter);
             encrypt(lastData, key);
-            printf("Encrypted data:\n%s\n", lastData);
+            //printf("Encrypted data:\n%s\n", lastData);
 //            decrypt(lastData,key);
 //            printf("Decrypted data:\n%s\n",lastData);
         } else {// TODO "-d" as for Decrypt
-            printf("\nour string is :\n%s\n", lastData);
+            //printf("\nour string is :\n%s\n", lastData);
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('d', key, lastData, counter);
             decrypt(lastData, key);
-            printf("Decrypted data:\n%s\n", lastData);
+            //printf("Decrypted data:\n%s\n", lastData);
         }
         data[counter] = '\0'; // TODO to make sure the string is printed without extra garbage letters
 //        printf("original data:\n %s\n",data);
