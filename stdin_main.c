@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <time.h>
 ///////////////////////////////////
 ///// INITS //////
 #define LIST_SIZE 6
@@ -204,6 +205,15 @@ void start_multithreading(char indicator, int key, char* data, int char_count)
 int main(int argc, char *argv[])
 
 {
+    ////// section for complexity in ms
+    clock_t start_time, end_time;
+    double execution_time;
+    start_time=clock();
+
+
+
+
+
     pthread_mutex_init(&our_mutex,NULL);
 
     for (int i = 0; i < 6; ++i) {
@@ -311,5 +321,13 @@ int main(int argc, char *argv[])
         }
         pthread_mutex_destroy(&our_mutex);
     }
+    ////// section for complexity print in ms
+    end_time=clock();
+
+    execution_time = (double) (end_time - start_time) / CLOCKS_PER_SEC;
+    printf("\nExecution time: %.6f seconds\n", execution_time);
+
+
+
 	return 0;
 }
