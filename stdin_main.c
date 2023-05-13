@@ -21,13 +21,13 @@ typedef struct my_thread my_thread;
 
 my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
 
-char our_string[MAX_SIZE]="\0";
-char result_string[MAX_SIZE]="\0";
+char our_string[MAX_SIZE]={0};
+char result_string[MAX_SIZE]={0};
 int our_key;
 
 void print_mythread_info(my_thread thread)
 {
-    printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    //printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>");
     printf("\nthread_list[%d]",thread.m_id);
     printf("\nstart index=%d , end index=%d",thread.m_start_index,thread.m_end_index);
     printf("\nis active ?");
@@ -53,7 +53,9 @@ void* thread_encrypt_function(void* thread)
     /// now lets get to real work and call the desired function
     strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
     current_sub_string[length] = '\0';  // Add null terminator
+    //printf("\nTHREAD[%d] substring before encryption= %s",current_thread.m_id,current_sub_string);
     encrypt(current_sub_string,our_key);
+    //printf("\nTHREAD[%d] substring after encryption= %s",current_thread.m_id,current_sub_string);
     /// now append this to the global result string
     pthread_mutex_lock(&our_mutex);
     strcat(result_string, current_sub_string);
@@ -258,7 +260,12 @@ int main(int argc, char *argv[])
 //		printf("Encrypted data:\n %s\n",lastData);
 
         printf("\nTHE GLOBAL RESULT STRING IS %s\n",result_string);
-        printf("the last char is %c",result_string[0]);
+        if(strcmp(result_string,lastData)==0)
+            printf("STRINGS EQUAL TO EXPECTED\n");
+            else
+        {
+            printf("STRINGS NOT EQUAL\n");
+        }
 	}
     /*
      * join threads
