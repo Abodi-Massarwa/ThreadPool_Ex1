@@ -232,6 +232,12 @@ int main(int argc, char *argv[])
         char *action = argv[2];
         strcpy(our_string, lastData);
         our_key = key;
+        ////strcmp extra section
+//        if(
+//        strcmp("HkcfcUXgX]jYf[YX]bUmY``ckkccX ",lastData)==0)
+//            printf("TRUE\n");
+//        else
+//            printf("FALSE THERE IS SOMETHING WRONG\n");
         if (action[1] == 'e') {
 
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads

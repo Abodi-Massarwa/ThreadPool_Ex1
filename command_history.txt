@@ -1,0 +1,356 @@
+    1  sudo tar -xvzf ~/Downloads/jetbrains-toolbox-1.xx.xxxx.tar.gz
+    2  ls 
+    3  ./jetbrains-toolbox
+    4  libfuse.so.2
+    5  sudo apt install libfuse.so.2
+    6  sudo tar -xzf jetbrains-toolbox-1.17.7391.tar.gz -C /opt
+    7  ls
+    8  jetbrains-toolbox
+    9  ./jetbrains-toolbox
+   10  sudo apt install libfuse2
+   11  ./jetbrains-toolbox
+   12  pip 
+   13  sudo apt install python3-pip
+   14  clear
+   15  ls 
+   16  sudo python3 main.py
+   17  ipconfig
+   18  iwconfig
+   19  ifconfig
+   20  sudo apt install net-tools
+   21  clear
+   22  ls 
+   23  sudo python3 main.py
+   24  pip 
+   25  pip install scapy 
+   26  sudo python3 main.py
+   27  clear
+   28  clea
+   29  claer
+   30  clear
+   31  sh ./NVIDIA-Linux-x86_64-525.116.03.run
+   32  sudo su 
+   33  sudo sh ./NVIDIA-Linux-x86_64-525.116.03.run
+   34  ls 
+   35  cd /Desktop
+   36  cd /Desktop/
+   37  cd Desktop/
+   38  ls 
+   39  sudo su
+   40  sudo sh ./NV*
+   41  git pull https://github.com/Abodi-Massarwa/EvilTwinAttack
+   42  git init 
+   43  git pull https://github.com/Abodi-Massarwa/EvilTwinAttack
+   44  git status 
+   45  git 
+   46  sudo apt install git 
+   47  clear
+   48  ls 
+   49  git 
+   50  git status 
+   51  git init 
+   52  git status 
+   53  clear
+   54  git add * 
+   55  git status 
+   56  git add .
+   57  git status 
+   58  git commit -m "first commit"
+   59  git config --global user.email "abodi.msarwi@gmail.com"
+   60  git config --global user.name "Abed El Kareem Massarwa"
+   61  git commit -m "first commit"
+   62  git status 
+   63  clear
+   64  ls 
+   65  git remote add origin -l https://github.com/Abodi-Massarwa/EvilTwinAttack
+   66  git remote add origin  https://github.com/Abodi-Massarwa/EvilTwinAttack
+   67  ls 
+   68  git push origin master
+   69  git push origin master\
+   70  git push origin master
+   71  clear
+   72  git status 
+   73  git statu 
+   74  git status 
+   75  git add .
+   76  git status 
+   77  git commit -m "added monitor mode file " 
+   78  git push origin main 
+   79  git push origin master
+   80  git remote -v
+   81  git push origin master
+   82  git push origin
+   83  git remote add origin https://github.com/Abodi-Massarwa/EvilTwinAttack
+   84  git status 
+   85  git add .
+   86  git push origin main 
+   87  git push origin master
+   88  git checkout main
+   89  git checkout main 
+   90  git status 
+   91  git checout -b main 
+   92  git checkout -b main 
+   93  git push origin main
+   94  git status 
+   95  gcc
+   96  ./encoder abodi 5
+   97  ls
+   98  ./encoder abodi 5
+   99  ./encoder
+  100  ./tester
+  101  ./encoder
+  102  clear
+  103  make all
+  104  ./encoder
+  105  export LD_LIBRARY_PATH=.
+  106  ./encoder
+  107  clear
+  108  make all 
+  109  ./encoder
+  110  ./tester
+  111  clear
+  112  ./tester
+  113  ./encoder
+  114  ./coder -e 12 <hello.txt
+  115  ./test.sh 
+  116  clear
+  117  make clean 
+  118  clear
+  119  cat hello.txt | ./coder -e 12 
+  120  make all 
+  121  cat hello.txt | ./coder -e 12 
+  122  ./test.sh 
+  123  cat hello.txt | ./coder -e 12 
+  124  export LD_LIBRARY_PATH=.
+  125  cat hello.txt | ./coder -e 12 \
+  126  cat hello.txt | ./coder -e 12 
+  127  clear
+  128  cat hello.txt | ./coder -e 12 
+  129  cat hello.txt | ./coder -e 12 dev
+  130  clear
+  131  cat hello.txt | ./coder -e 12 dev
+  132  make all 
+  133  cat hello.txt | ./coder -e 12 dev
+  134  cat hello.txt | ./coder -e 12
+  135  cat hello.txt | ./coder -e 12 d
+  136  make clean 
+  137  make all
+  138  cat hello.txt | ./coder 12 -e dev
+  139  cat hello.txt | ./coder 12 -e dev
+  140  make all
+  141  cat hello.txt | ./coder 12 -e dev
+  142  make all
+  143  cat hello.txt | ./coder 12 -e dev
+  144  make all 
+  145  cat hello.txt | ./coder 12 -e dev
+  146  cat hello.txt | ./coder 12 -e dev
+  147  make all 
+  148  cat hello.txt | ./coder 12 -e dev
+  149  make all 
+  150  cat hello.txt | ./coder 12 -e dev
+  151  make all 
+  152  cat hello.txt | ./coder 12 -e dev
+  153  make all 
+  154  cat hello.txt | ./coder 12 -e dev
+  155  cat hello.txt | ./coder 12 -e 
+  156  make all 
+  157  cat hello.txt | ./coder 12 -e 
+  158  clear
+  159  ./test
+  160  ./test.sh
+  161  cat hello.txt | ./coder 12 -e 
+  162  cat hello.txt | ./coder 12 -e dev
+  163  make all 
+  164  cat hello.txt | ./coder 12 -e dev
+  165  cat hello.txt | ./coder 12 -e
+  166  clear
+  167  make all 
+  168  ./test.sh
+  169  make all clear
+  170  clear
+  171  ./test.sh
+  172  clear
+  173  ./test.sh
+  174  ./coder -d 12 dev
+  175  make all
+  176  ./coder -e 12 <hello.txt | ./coder -d 12 dev
+  177  make all
+  178  ./coder -e 12 <hello.txt
+  179  clear
+  180  make all 
+  181  ./coder 12 -e <hello.txt | ./coder 12 -d dev
+  182  make all 
+  183  ./coder 12 -e <hello.txt | ./coder 12 -d dev
+  184  clear
+  185  ./coder 12 -e <hello.txt | ./coder 12 -d dev
+  186  clear
+  187  ./coder 12 -e <hello.txt | ./coder 12 -d dev
+  188  make all 
+  189  ./coder 12 -e <hello.txt | ./coder 12 -d dev
+  190  clear
+  191  ./test.sh
+  192  make clean 
+  193  ./test.sh
+  194  make clean 
+  195  ./test.sh
+  196  make clean 
+  197  ./test.sh
+  198  clear
+  199  make clean 
+  200  ./test.sh
+  201  make clean 
+  202  clear
+  203  ./test.sh
+  204  cat hello.txt | ./coder 12 -e 
+  205  ./coder 12 -d dev
+  206  make clean 
+  207  ./test.sh
+  208  ./coder 12 -d dev
+  209  cat hello2.txt
+  210  ./coder 12 -d dev
+  211  cat hello.txt | ./coder 12 -e dev
+  212  ./coder 12 -e dev
+  213  cat hello.txt | ./coder 12 -e dev
+  214  ./coder 12 -e dev
+  215  ./coder 12 -d dev
+  216  make all 
+  217  cat hello.txt | ./coder 12 -e dev
+  218  ./coder 12 -d dev
+  219  make all 
+  220  cat hello.txt | ./coder 12 -e dev
+  221  ./coder 12 -d dev
+  222  ./coder 12 -e dev
+  223  make all 
+  224  cat hello.txt | ./coder 12 -e dev
+  225  ./coder 12 -d dev
+  226  make all 
+  227  cat hello.txt | ./coder 12 -e dev
+  228  ./coder 12 -d dev
+  229  make all 
+  230  cat hello.txt | ./coder 12 -e dev
+  231  clear
+  232  make clean 
+  233  ./test.sh
+  234  ./coder 12 -d dev
+  235  make clean 
+  236  ./test.sh
+  237  ./coder 12 -d dev
+  238  ./coder 12 -e dev
+  239  ./coder 12 -d dev
+  240  clear
+  241  ./coder 12 -d dev
+  242  cat hello.txt | ./coder 12 -e dev
+  243  cat hello.txt | ./coder 12 -e | ./coder 12 -d
+  244  ./coder 12 -e >wolf.txt
+  245  ./coder 12 -e
+  246  make clean 
+  247  make all 
+  248  cat hello.txt | ./coder 12 -e dev
+  249  export LD_LIBRARY_PATH=.
+  250  cat hello.txt | ./coder 12 -e dev
+  251  cat hello.txt | ./coder 12 -e 
+  252  ./test.sh
+  253  make clean 
+  254  ./test.sh
+  255  cat hello.txt | ./coder 12 -e dev
+  256  wc -m hello2.txt
+  257  wc -m hello.txt
+  258  wc -m hello2.txt
+  259  make clean 
+  260  clear
+  261  wc -m hello.txt
+  262  ./test.sh
+  263  make clean 
+  264  clear
+  265  ./test.sh
+  266  clear
+  267  make clean 
+  268  clear
+  269  ./test.sh
+  270  clear
+  271  make stdinExample
+  272  make all 
+  273  make clean 
+  274  make all 
+  275  make clean 
+  276  make all
+  277  make clean 
+  278  clear
+  279  ./test.sh
+  280  make clean 
+  281  ./test.sh
+  282  make clean 
+  283* 
+  284  ./coder 12 -e dev
+  285  export LD_LIBRARY_PATH=.
+  286  ./coder 12 -e dev
+  287  ./coder 12 -d dev
+  288  ./coder 12 -e  | ./coder 12 -d 
+  289  ./coder 12 -e dev
+  290  ./coder 12 -d dev
+  291  ./coder 12 -e > res.txt
+  292  ./coder 12 -d dev < res.txt
+  293  ./coder 12 -d < res.txt
+  294  make clean 
+  295  clear
+  296  make all 
+  297  make all
+  298  clear
+  299  ./coder -e 12 <hello.txt | ./coder  12 -d dev > res.txt
+  300* 
+  301  ./coder  12 -e <hello.txt | ./coder  12 -d  > res.txt
+  302  ./coder  12 -e <hello.txt
+  303  touch res2.txt
+  304  ./coder  12 -d <res2.txt
+  305  ./coder  12 -d <res2.txt | cat
+  306  cat res2.txt | ./coder 12 -d 
+  307  cat res2.txt | ./coder 12 -d >res3.txt
+  308  clear
+  309  make all 
+  310  clear
+  311  ./coder 12 -e | ./coder 12 -d
+  312  ./coder 12 -e
+  313  ./coder 12 -d
+  314  ./coder 12 -d | ./coder 12 -e
+  315  ./coder 12 -d | ./coder 12 -e | ./coder 12 -d 
+  316* 
+  317* 
+  318  ./coder 12 -e<example.txt | ./coder 12 -d
+  319  ./coder 12 -e<example.txt
+  320  ./coder 12 -e<example.txt > abc.txt
+  321  diff abc.txt abc2.txt
+  322  ./coder 12 -e<example.txt
+  323  ./coder 12 -e<example.txt > abc.txt |cat
+  324  ./coder 12 -e<example.txt > abc.txt |cat abc.txt
+  325  ./coder 12 -e<example.txt > abc.txt && cat abc.txt
+  326  ./coder 12 -e<example.txt
+  327  echo HkcfcUXgX]jYf[YX]bUmY``ckkccX 
+  328  ./coder 12 -d
+  329  HkcfcUXgX]jYf[YX]bUmYckkccX
+  330  ./coder 12 -d
+  331  ./coder 12 -e<example.txt | ./coder 12 -d ev
+  332  diff 1.txt 2.txt
+  333  ./coder 12 -d
+  334  ./coder 12 -d ev
+  335  diff 1.txt 2.txt
+  336* 
+  337  ./coder 12 -e<example.txt | ./coder 12 -d ev
+  338  ./coder 12 -d ev
+  339  diff 1.txt 2.txt
+  340  make clean
+  341  clear
+  342  history > command_history.txt
+  343  make all 
+  344  diff 1.txt 2.txt
+  345  ./coder 12 -d ev
+  346  ./coder 12 -e<example.txt | ./coder 12 -d ev
+  347  make all 
+  348  ./coder 12 -e<example.txt | ./coder 12 -d ev
+  349  ./coder 12 -e<example.txt
+  350  make all 
+  351  ./coder 12 -e<example.txt
+  352  ./coder 12 -e<example.txt | ./coder 12 -d ev
+  353  clear
+  354  make clean 
+  355  clear
+  356  history > command_history.txt
