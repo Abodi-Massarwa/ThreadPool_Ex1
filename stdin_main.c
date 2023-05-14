@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
     if (isatty(fileno(stdin))) {
         // Input is not redirected, read from command line
 
-        printf("Enter input from command line:\n");
+        //printf("Enter input from command line:\n");
 
         input_indicator = '\n';
     } else {
