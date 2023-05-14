@@ -1,10 +1,10 @@
 .PHONY: all
-all: stdinExample
+all: coder
 
 #task:	codec.h basic_main.c
 #	gcc basic_main.c -L. -lCodec -o encoder
 
-stdinExample:	stdin_main.c
+coder:	stdin_main.c
 	gcc stdin_main.c -L. -lCodec -o coder
 
 .PHONY: clean
