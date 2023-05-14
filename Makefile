@@ -9,4 +9,4 @@ stdinExample:	stdin_main.c
 
 .PHONY: clean
 clean:
-	-rm -f coder hello_encrypted.txt  2>/dev/null
+	-rm -f coder hello_encrypted.txt hello2.txt  2>/dev/null
