@@ -272,10 +272,16 @@ int main(int argc, char *argv[])
         //data[counter] = c;
         append(&str,(char) c);
         /*
-         *  TODO it works !!!, once again remember
-         *      1) m_size means allocated size
-         *       2) use strlen() to tell whats the real size till last letter.
-         *      3 strlen() doesnt include the \0 in its count.
+         *      TODO it works !!!, once again remember
+         *          1) m_size means allocated size
+         *          2) use strlen() to tell whats the real size till last letter.
+         *          3) strlen() doesnt include the \0 in its count.
+         */
+        /*
+         *  TODO we need to modify threads
+         *      1) to have dynamic_string
+         *      2) or give start\ end index for each thread in the global string array
+         *
          */
     }
 
