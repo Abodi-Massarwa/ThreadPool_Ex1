@@ -23,6 +23,51 @@ my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
 char our_string[MAX_SIZE] = {0};
 char result_string[MAX_SIZE] = {0};
 int our_key;
+///////////////////////// Dynamic array //////////////////////////////////////
+struct dynamic_string
+{
+    char* m_string;
+    int m_size; /// not till \0 but the size of alloc
+    int m_index;
+};
+typedef struct dynamic_string dynamic_string;
+/*
+ * initializing the string initially with 1024
+ */
+void init(dynamic_string* str)
+{
+    str->m_size=MAX_SIZE;
+    str->m_index=0;
+    str->m_string=(char*) calloc(str->m_size, sizeof(char));
+    /// TODO assuming calloc nullpoints the whole array
+}
+/*
+ * appending I went with chars sine its the most used thing in C we aren't regular to pushing strings
+ *
+ */
+void append(dynamic_string* str, char c)
+{
+    if(str->m_index==str->m_size) // we need to resize
+    {
+        /// resizing the array
+        str->m_size+=MAX_SIZE; // increasing with multiples of 1024
+        str->m_string=(char*) realloc(str->m_string,str->m_size* sizeof(char));
+    }
+    str->m_string[str->m_index++]=c; // added the char and index++
+    str->m_string[str->m_index]=0; /// null point after each char since we dont know when to stop.
+}
+void release(dynamic_string* str)
+{
+    free(str->m_string);
+}
+
+
+
+
+
+
+
+
 
 ////////////////////////////// functions //////////////////////////////////
 void print_mythread_info(my_thread thread) {
@@ -210,12 +255,30 @@ int main(int argc, char *argv[])
     } else {
         input_indicator = EOF;
     }
-    while (((c = getchar()) != input_indicator) &&
-           (counter != 1024)) { /// Either EOF| \n or index reached 1024(which should be \0)
-        /// in case it didnt reach 1024 then it reached index k which we should null terminate. (to indicate the end of string)
-        data[counter] = c;
+//    while (((c = getchar()) != input_indicator)  &&(counter != 1024))
+//    { /// Either EOF| \n or index reached 1024(which should be \0)
+//        /// in case it didnt reach 1024 then it reached index k which we should null terminate. (to indicate the end of string)
+//        data[counter] = c;
+//        counter++;
+//    }
+    //////////// INIT //////////////////
+    dynamic_string str;
+    init(&str);
+
+    //TODO alternate version of while for our new dynamic string.
+    while (((c = getchar()) != input_indicator))
+    { /// stops only in case we encounter an indicator.
         counter++;
+        //data[counter] = c;
+        append(&str,(char) c);
+        /*
+         *  TODO it works !!!, once again remember
+         *      1) m_size means allocated size
+         *       2) use strlen() to tell whats the real size till last letter.
+         *      3 strlen() doesnt include the \0 in its count.
+         */
     }
+
 
     /*
      * after we exit the loop we need to make sure whether the text reached the maximum length

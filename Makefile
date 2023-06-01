@@ -9,4 +9,4 @@ coder:	stdin_main.c
 
 .PHONY: clean
 clean:
-	-rm -f coder hello_encrypted.txt hello2.txt  2>/dev/null
+	-rm -f coder text_encrypted.txt text2.txt  2>/dev/null
