@@ -395,14 +395,14 @@ int main(int argc, char *argv[])
      */
     if (counter > 0) {
 
-        char lastData[counter + 1]; /// same size as the input.
-        lastData[0] = '\0';
-        data[counter] = '\0';
-        strcat(lastData, data);
-        lastData[counter] = '\0'; /// double-checked no need for more headaches
+        //char lastData[counter + 1]; /// same size as the input.
+        //lastData[0] = '\0';
+        //data[counter] = '\0';
+        //strcat(lastData, data);
+        //lastData[counter] = '\0'; /// double-checked no need for more headaches
 
         char *action = argv[2];
-        strcpy(our_string, lastData);
+        //strcpy(our_string, lastData);
         our_key = key;
         ////strcmp extra section
 //        if(
@@ -415,18 +415,18 @@ int main(int argc, char *argv[])
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('e', key, global_str.m_string, counter);
             if (dev_mode) {
-                printf("\nour original string is :\n%s\n", lastData);
+                printf("\nour original string is :\n%s\n", global_str.m_string);
                 encrypt(global_str.m_string, key);
-                printf("Encrypted single-threaded data:\n%s\n", lastData);
+                printf("Encrypted single-threaded data:\n%s\n", global_str.m_string);
             }
 
         } else {// TODO "-d" as for Decrypt
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('d', key, global_str.m_string, counter);
             if (dev_mode) {
-                printf("\nour original string is :\n%s\n", lastData);
+                printf("\nour original string is :\n%s\n", global_str.m_string);
                 decrypt(global_str.m_string, key);
-                printf("Decrypted single-threaded data:\n%s\n", lastData);
+                printf("Decrypted single-threaded data:\n%s\n", global_str.m_string);
             }
         }
         /*
@@ -466,7 +466,7 @@ int main(int argc, char *argv[])
                 printf("\nthe Decrypted multi-threaded string is:\n%s\n", final_str.m_string);
 
 
-            if (strcmp(result_string, lastData) == 0)
+            if (strcmp(final_str.m_string, global_str.m_string) == 0)
                 printf("STRINGS EQUAL TO EXPECTED\n");
             else {
                 printf("STRINGS NOT EQUAL\n");
