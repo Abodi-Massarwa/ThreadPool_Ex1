@@ -45,10 +45,13 @@ void append(dynamic_string* str, char c)
 }
 void append_string(dynamic_string* str, char* c)
 {
+    int multiple=-1;
     if(str->m_index==str->m_alloc_size || strlen(c) >= (str->m_alloc_size - str->m_index + 1)) // we need to resize
     {
         /// resizing the array
-        str->m_alloc_size+=MAX_SIZE; // increasing with multiples of 1024
+        /// how many 1024's in our string we want to add
+        multiple= strlen(c)/1024 +1;
+        str->m_alloc_size+=MAX_SIZE*multiple; // increasing with multiples of 1024
         str->m_string=(char*) realloc(str->m_string, (str->m_alloc_size) * sizeof(char));
     }
     for (int i = 0; i < strlen(c); ++i) {
@@ -70,6 +73,9 @@ struct my_thread {
     pthread_t m_thread;
     struct dynamic_string str;
 };
+
+void single_threaded(dynamic_string *pString, int key,char indicator);
+
 typedef struct my_thread my_thread;
 //////////////////// GLOBAL VARIABLES SECTION ////////////////////////////////
 my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
@@ -78,6 +84,8 @@ char result_string[MAX_SIZE] = {0};
 int our_key;
 dynamic_string final_str;
 dynamic_string global_str;
+dynamic_string str2;
+dynamic_string final_single_threaded_str;
 ////////////////////////////// functions //////////////////////////////////
 void print_mythread_info(my_thread thread) {
     //printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -308,6 +316,8 @@ int main(int argc, char *argv[])
 {
     init(&final_str);
     init(&global_str);
+    init(&str2);
+    init(&final_single_threaded_str);
     ////// section for complexity in ms
     clock_t start_time, end_time;
     double execution_time;
@@ -338,37 +348,24 @@ int main(int argc, char *argv[])
         dev_mode = 1;
 
     int key = atoi(argv[1]);
-    //printf("key is %i \n",key);
-
     int c;
     int input_indicator;
     int counter = 0;
     int dest_size = 1024;
     char data[dest_size + 1];
     // Null-terminate the entire string
-    for (size_t i = 0; i <= dest_size; i++) {
+    for (size_t i = 0; i <= dest_size; i++)
+    {
         data[i] = '\0';
     }
 
-
-    if (isatty(fileno(stdin))) {
-        // Input is not redirected, read from command line
-
-        //printf("Enter input from command line:\n");
-
+    if (isatty(fileno(stdin)))
+    {
         input_indicator = '\n';
-    } else {
+    } else
+    {
         input_indicator = EOF;
     }
-//    while (((c = getchar()) != input_indicator)  &&(counter != 1024))
-//    { /// Either EOF| \n or index reached 1024(which should be \0)
-//        /// in case it didnt reach 1024 then it reached index k which we should null terminate. (to indicate the end of string)
-//        data[counter] = c;
-//        counter++;
-//    }
-    //////////// INIT //////////////////
-    //dynamic_string str;
-
     //TODO alternate version of while for our new dynamic string.
     while (((c = getchar()) != input_indicator))
     { /// stops only in case we encounter an indicator.
@@ -388,46 +385,38 @@ int main(int argc, char *argv[])
          *
          */
     }
+    append_string(&str2,global_str.m_string);/// tested
+
 
 
     /*
      * after we exit the loop we need to make sure whether the text reached the maximum length
      * or simply because the file ended and the counter isn't 1024
      */
-    if (counter > 0) {
-
-        //char lastData[counter + 1]; /// same size as the input.
-        //lastData[0] = '\0';
-        //data[counter] = '\0';
-        //strcat(lastData, data);
-        //lastData[counter] = '\0'; /// double-checked no need for more headaches
+    if (counter > 0)
+    {
 
         char *action = argv[2];
-        //strcpy(our_string, lastData);
         our_key = key;
-        ////strcmp extra section
-//        if(
-//        strcmp("HkcfcUXgX]jYf[YX]bUmY``ckkccX ",lastData)==0)
-//            printf("TRUE\n");
-//        else
-//            printf("FALSE THERE IS SOMETHING WRONG\n");
         if (action[1] == 'e') {
 
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('e', key, global_str.m_string, counter);
             if (dev_mode) {
-                printf("\nour original string is :\n%s\n", global_str.m_string);
-                encrypt(global_str.m_string, key);
-                printf("Encrypted single-threaded data:\n%s\n", global_str.m_string);
+                //printf("\nour original string is :\n%s\n", str2.m_string);
+                single_threaded(&str2,key,action[1]);
+                //encrypt(str2.m_string, key);
+                //printf("Encrypted single-threaded data:\n%s\n", str2.m_string);
             }
 
         } else {// TODO "-d" as for Decrypt
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
             start_multithreading('d', key, global_str.m_string, counter);
             if (dev_mode) {
-                printf("\nour original string is :\n%s\n", global_str.m_string);
-                decrypt(global_str.m_string, key);
-                printf("Decrypted single-threaded data:\n%s\n", global_str.m_string);
+                //printf("\nour original string is :\n%s\n", str2.m_string);
+                single_threaded(&str2,key,action[1]);
+                //decrypt(str2.m_string, key);
+                //printf("Decrypted single-threaded data:\n%s\n", str2.m_string);
             }
         }
         /*
@@ -463,12 +452,12 @@ int main(int argc, char *argv[])
          */
         if (dev_mode) {
             if (action[1] == 'e')
-                printf("\nthe Encrypted multi-threaded string is:\n%s\n", final_str.m_string);
+                printf("\nthe Encrypted multi-threaded string is:\n%s\n", str2.m_string);
             else //// means 'd'
-                printf("\nthe Decrypted multi-threaded string is:\n%s\n", final_str.m_string);
+                printf("\nthe Decrypted multi-threaded string is:\n%s\n", str2.m_string);
 
 
-            if (strcmp(final_str.m_string, global_str.m_string) == 0)
+            if (strcmp(final_single_threaded_str.m_string, final_str.m_string) == 0)
                 printf("STRINGS EQUAL TO EXPECTED\n");
             else {
                 printf("STRINGS NOT EQUAL\n");
@@ -481,9 +470,9 @@ int main(int argc, char *argv[])
             ////// section for complexity print in ms
             end_time = clock();
 
-            execution_time = (double) (end_time - start_time) / CLOCKS_PER_SEC;
+            execution_time = ((double) (end_time - start_time)) / CLOCKS_PER_SEC;
             if (dev_mode)
-                printf("\nExecution time: %.6f seconds\n", execution_time);
+                printf("\nExecution time: %f seconds\n", execution_time);
         }
 
 ////////////////////////////
@@ -491,7 +480,42 @@ int main(int argc, char *argv[])
         printf("%s", final_str.m_string);
         release(&final_str);
         release(&global_str);
+        release(&str2);
     }
     //// otherwise counter is 0 which means we have no string to Encrypt , Decrypt.
     return 0;
+}
+
+void single_threaded(dynamic_string *pString, int key,char indicator) {
+/*
+ * TODO 1) divide string into chuncks of 1024 using strcpy
+ *
+ */
+    char temp_str[1025]={0};
+    int iter=0;
+    int len= strlen(pString->m_string);
+    int k=len/1024; // how many chunks of 1024
+    int remainder= len%1024;
+    for (int i = 0; i < k; ++i) {
+        strncpy(temp_str,pString->m_string+iter,1024);
+        temp_str[1024]='\0';
+        /// if e encrypt if d decrypt
+        /// strncat needed too or append_string
+        if(indicator=='e') encrypt(temp_str,our_key);
+        else decrypt(temp_str,our_key);
+        iter+=1024;
+        append_string(&final_single_threaded_str,temp_str);
+    }
+    if(remainder!=0)
+    {
+        strncpy(temp_str,pString->m_string+iter,remainder);
+        temp_str[remainder]='\0';
+        /// if e encrypt if d decrypt
+        /// strncat needed too or append_string
+        if(indicator=='e') encrypt(temp_str,our_key);
+        else decrypt(temp_str,our_key);
+        iter+=remainder;
+        append_string(&final_single_threaded_str,temp_str);
+    }
+
 }
