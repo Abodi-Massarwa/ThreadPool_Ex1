@@ -138,7 +138,10 @@ void *thread_encrypt_function(void *thread) {
     int iterator=start_index;
     int remainder= size%1024; //could be 0 could be k<1024
     int k=floor(size/1024); // could be 0 could be time of 1024
+    //// TODO delete before submit !!!
     //printf("\nthread [%d] string size is %ld",current_thread_ptr->m_id,strlen(current_thread_ptr->str.m_string));
+//    printf("\nportion size mod 1024 is %d",remainder);
+//    printf("\nportion number is%d",k);
     /// initializing the struct dynamic_string inside our thread
     dynamic_string dynamic_thread_str =current_thread_ptr->str;
     init(&dynamic_thread_str);
@@ -167,6 +170,8 @@ void *thread_encrypt_function(void *thread) {
     if(remainder>0) {
         strncpy(temp_string, global_str.m_string + iterator, remainder);
         temp_string[remainder] = '\0';
+        //// TODO delete
+        //printf("\nstrlen of %d", strlen(temp_string));
         encrypt(temp_string, our_key);
         //check(&current_thread_ptr->str);
         append_string(&current_thread_ptr->str,temp_string); /// TODO check its functionality in worse cases
@@ -174,7 +179,10 @@ void *thread_encrypt_function(void *thread) {
        //printf("index %d", current_thread_ptr->str.m_index);
         /// TODO in case of cat we need to be cautios and resize our string
         //strncat(current_thread_ptr->str.m_string, temp_string, remainder + 1);
-        dynamic_thread_str.m_string[end_index] = '\0';
+//        int portion_size= remainder-iterator+1;
+//        iterator+=remainder;
+        dynamic_thread_str.m_string[current_thread_ptr->str.m_index]='\0'; /// TODO check index
+        //printf("\nstrlen of thread string %d", strlen(current_thread_ptr->str.m_string));
     }
 //// TODO check ur math in the whole algorithm
 
@@ -248,7 +256,7 @@ void *thread_decrypt_function(void *thread) {
         //printf("index %d", current_thread_ptr->str.m_index);
         /// TODO in case of cat we need to be cautios and resize our string
         //strncat(current_thread_ptr->str.m_string, temp_string, remainder + 1);
-        dynamic_thread_str.m_string[end_index] = '\0';
+        //dynamic_thread_str.m_string[end_index] = '\0';
     }
 
 }
@@ -520,11 +528,11 @@ int main(int argc, char *argv[])
 
         }
         /// TODO DELETE
-        printf("size of first string :%ld",strlen(global_str.m_string));
-        printf("\n%s",global_str.m_string);
-
-        printf("\nsize of final string :%ld",strlen(final_str.m_string));
-        printf("\n%s",final_str.m_string);
+//        printf("\nsize of first string :%ld",strlen(global_str.m_string));
+//        printf("\n%s",global_str.m_string);
+//
+//        printf("\nsize of final string :%ld",strlen(final_str.m_string));
+//        printf("\n%s",final_str.m_string);
         /*
          * Printing the final result
          */
@@ -555,7 +563,7 @@ int main(int argc, char *argv[])
 
 ////////////////////////////
 /// we simply print the plain result itself to make it flexible for multiple redirections ... < > <>
-        printf("%s", result_string);
+        printf("%s", final_str.m_string);
     }
     //// otherwise counter is 0 which means we have no string to Encrypt , Decrypt.
     return 0;
