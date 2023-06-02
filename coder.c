@@ -152,6 +152,7 @@ void *thread_encrypt_function(void *thread) {
         dynamic_thread_str.m_string[current_thread_ptr->str.m_index]='\0'; /// TODO check index
         //printf("\nstrlen of thread string %d", strlen(current_thread_ptr->str.m_string));
     }
+    free(temp_string);
 //// TODO check ur math in the whole algorithm
 
 }
@@ -211,7 +212,7 @@ void *thread_decrypt_function(void *thread) {
         //strncat(current_thread_ptr->str.m_string, temp_string, remainder + 1);
         //dynamic_thread_str.m_string[end_index] = '\0';
     }
-
+    free(temp_string);
 }
 void start_multithreading(char indicator, int key, char *str, int index)
 {
@@ -446,6 +447,7 @@ int main(int argc, char *argv[])
             //  we dont want to see garbage characters which we aren't interested in :'(
             //strcat(result_string, thread_list[i].m_string);
             append_string(&final_str,thread_list[i].str.m_string);
+            release(&thread_list[i].str);
             //print_mythread_info(thread_list[i]);
             //printf(" string of thread[%d] =%s", i, thread_list[i].m_string);
 
@@ -487,6 +489,8 @@ int main(int argc, char *argv[])
 ////////////////////////////
 /// we simply print the plain result itself to make it flexible for multiple redirections ... < > <>
         printf("%s", final_str.m_string);
+        release(&final_str);
+        release(&global_str);
     }
     //// otherwise counter is 0 which means we have no string to Encrypt , Decrypt.
     return 0;
