@@ -5,29 +5,16 @@
 #include <pthread.h>
 #include <time.h>
 #include <unistd.h>
+#include <math.h>
 ///////////////////////////////////
 ///// INITS //////
 #define LIST_SIZE 6
 #define MAX_SIZE 1024
-struct my_thread {
-    int m_id; // TODO assuming it helps us in the matter or putting back data in order after the multi-threading is done.
-    int m_start_index; /// since we are dealing with char* tasks can be divided by simply indexes
-    int m_end_index;
-    int m_is_active; /// 1 active 0 not active
-    char m_string[(MAX_SIZE / LIST_SIZE) + 1]; /// worst case scenario each thread holds 1024/6 chars
-    pthread_t m_thread;
-};
-typedef struct my_thread my_thread;
-//////////////////// GLOBAL VARIABLES SECTION ////////////////////////////////
-my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
-char our_string[MAX_SIZE] = {0};
-char result_string[MAX_SIZE] = {0};
-int our_key;
 ///////////////////////// Dynamic array //////////////////////////////////////
 struct dynamic_string
 {
     char* m_string;
-    int m_size; /// not till \0 but the size of alloc
+    int m_alloc_size; /// not till \0 but the size of alloc
     int m_index;
 };
 typedef struct dynamic_string dynamic_string;
@@ -36,9 +23,9 @@ typedef struct dynamic_string dynamic_string;
  */
 void init(dynamic_string* str)
 {
-    str->m_size=MAX_SIZE;
+    str->m_alloc_size=MAX_SIZE+100;
     str->m_index=0;
-    str->m_string=(char*) calloc(str->m_size, sizeof(char));
+    str->m_string=(char*) calloc(str->m_alloc_size, sizeof(char));
     /// TODO assuming calloc nullpoints the whole array
 }
 /*
@@ -47,28 +34,61 @@ void init(dynamic_string* str)
  */
 void append(dynamic_string* str, char c)
 {
-    if(str->m_index==str->m_size) // we need to resize
+    if(str->m_index==str->m_alloc_size) // we need to resize
     {
         /// resizing the array
-        str->m_size+=MAX_SIZE; // increasing with multiples of 1024
-        str->m_string=(char*) realloc(str->m_string,str->m_size* sizeof(char));
+        str->m_alloc_size+=MAX_SIZE; // increasing with multiples of 1024
+        str->m_string=(char*) realloc(str->m_string, (str->m_alloc_size) * sizeof(char));
     }
     str->m_string[str->m_index++]=c; // added the char and index++
     str->m_string[str->m_index]=0; /// null point after each char since we dont know when to stop.
 }
+void append_string(dynamic_string* str, char* c)
+{
+    if(str->m_index==str->m_alloc_size || strlen(c) >= (str->m_alloc_size - str->m_index + 1)) // we need to resize
+    {
+        /// resizing the array
+        str->m_alloc_size+=MAX_SIZE; // increasing with multiples of 1024
+        str->m_string=(char*) realloc(str->m_string, (str->m_alloc_size) * sizeof(char));
+    }
+    for (int i = 0; i < strlen(c); ++i) {
+        str->m_string[str->m_index++]=c[i];
+    }
+    //str->m_string[str->m_index++]=c; // added the char and index++
+    str->m_string[str->m_index]=0; /// null point after each char since we dont know when to stop.
+}
+//int check(dynamic_string* str)
+//{
+//    while(str->m_index!='\0')
+//        ++str->m_index;
+//    if(str->m_index== strlen(str->m_string)-1)
+//    {
+//        str->m_alloc_size+=MAX_SIZE; // increasing with multiples of 1024
+//        str->m_string=(char*) realloc(str->m_string,str->m_alloc_size* sizeof(char));
+//    }
+
+
 void release(dynamic_string* str)
 {
     free(str->m_string);
 }
-
-
-
-
-
-
-
-
-
+struct my_thread {
+    int m_id; // TODO assuming it helps us in the matter or putting back data in order after the multi-threading is done.
+    int m_start_index; /// since we are dealing with char* tasks can be divided by simply indexes
+    int m_end_index;
+    int m_is_active; /// 1 active 0 not active
+    char m_string[(MAX_SIZE / LIST_SIZE) + 1]; /// worst case scenario each thread holds 1024/6 chars
+    pthread_t m_thread;
+    struct dynamic_string str;
+};
+typedef struct my_thread my_thread;
+//////////////////// GLOBAL VARIABLES SECTION ////////////////////////////////
+my_thread thread_list[LIST_SIZE]; // our array of threads with a fixed size of 6
+char our_string[MAX_SIZE] = {0};
+char result_string[MAX_SIZE] = {0};
+int our_key;
+dynamic_string final_str;
+dynamic_string global_str;
 ////////////////////////////// functions //////////////////////////////////
 void print_mythread_info(my_thread thread) {
     //printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -80,6 +100,9 @@ void print_mythread_info(my_thread thread) {
     else /// thats extra we dont even receive dead threads in this function.
         printf(" False");
     printf("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+    printf("\nstring length is %ld",strlen(thread.str.m_string));
+    printf("\nstring is %s",thread.str.m_string);
+    printf("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 }
 
 void *thread_encrypt_function(void *thread) {
@@ -89,76 +112,223 @@ void *thread_encrypt_function(void *thread) {
      *  TODO 1) lets give each thread its own char[]
      */
 
-    my_thread *current_thread_ptr = ((my_thread *) thread);
-    my_thread current_thread = *((my_thread *) thread);
-    size_t length = current_thread_ptr->m_end_index - current_thread_ptr->m_start_index + 1;
-    char current_sub_string[length + 1];
-    current_sub_string[0] = '\0';
-    /// now lets get to real work and call the desired function
-    strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
-    current_sub_string[length] = '\0';  // Add null terminator
-    //////////////////////////////////////////////////////////
-    encrypt(current_sub_string, our_key);
 
-    strcpy(current_thread_ptr->m_string, current_sub_string);
-    current_thread_ptr->m_string[length] = '\0';
+//    my_thread *current_thread_ptr = ((my_thread *) thread);
+//    my_thread current_thread = *((my_thread *) thread);
+//    size_t length = current_thread_ptr->m_end_index - current_thread_ptr->m_start_index + 1;
+//    char current_sub_string[length + 1];
+//    current_sub_string[0] = '\0';
+//    /// now lets get to real work and call the desired function
+//    strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
+//    current_sub_string[length] = '\0';  // Add null terminator
+//    //////////////////////////////////////////////////////////
+//    encrypt(current_sub_string, our_key);
+//
+//    strcpy(current_thread_ptr->m_string, current_sub_string);
+//    current_thread_ptr->m_string[length] = '\0';
 
+/* TODO
+ *  in this step we are getting a thread in which it has a start index and an end index which could be <1024 or even more
+ *  so we need to do our math right and check for both cases
+ */
+    my_thread * current_thread_ptr= (my_thread*)thread;
+    size_t start_index=current_thread_ptr->m_start_index;
+    size_t end_index=current_thread_ptr->m_end_index;
+    int size=end_index-start_index+1;
+    int iterator=start_index;
+    int remainder= size%1024; //could be 0 could be k<1024
+    int k=floor(size/1024); // could be 0 could be time of 1024
+    //printf("\nthread [%d] string size is %ld",current_thread_ptr->m_id,strlen(current_thread_ptr->str.m_string));
+    /// initializing the struct dynamic_string inside our thread
+    dynamic_string dynamic_thread_str =current_thread_ptr->str;
+    init(&dynamic_thread_str);
+    dynamic_thread_str.m_string=(char*) calloc(size + 1, sizeof(char)); /// allocating string same size as for strcat in future
+    ////////////////////////////////////////////////////////// TODO FIX THE ERROR IN HERE THE DIVISION IS MISSED UP
+    char* temp_string=(char*) calloc(1024+1, sizeof(char)); ///TODO FREEEEE 1024+1 for the null pointer.
+    for (int i = 0; i <k; ++i)
+    {
+        /// time to do encrypt/decrypt for each chunk at a time
+        /*
+         * TODO for each chunck out of k we need to :
+         *      1) copy it to a temporary string from the string we got as input
+         *      2) call encrypt/decrypt with that @temp_string (strcpy)
+         *      3) append it to our @thread->str->m_string (srtncat)
+         *
+         */
+        strncpy(temp_string, global_str.m_string + iterator, 1024);
+        iterator+=1024;
+        temp_string[1024]='\0';
+        encrypt(temp_string,our_key);
+        append_string(&current_thread_ptr->str,temp_string);
+        //strncat(current_thread_ptr->str.m_string,temp_string, strlen(temp_string)+1); // +1 for \0
+
+    }
+    /// after all of this there might be a remainder soo .
+    if(remainder>0) {
+        strncpy(temp_string, global_str.m_string + iterator, remainder);
+        temp_string[remainder] = '\0';
+        encrypt(temp_string, our_key);
+        //check(&current_thread_ptr->str);
+        append_string(&current_thread_ptr->str,temp_string); /// TODO check its functionality in worse cases
+       //printf("strlen %d\n", strlen(current_thread_ptr->str.m_string));
+       //printf("index %d", current_thread_ptr->str.m_index);
+        /// TODO in case of cat we need to be cautios and resize our string
+        //strncat(current_thread_ptr->str.m_string, temp_string, remainder + 1);
+        dynamic_thread_str.m_string[end_index] = '\0';
+    }
+//// TODO check ur math in the whole algorithm
 
 }
 
 
 void *thread_decrypt_function(void *thread) {
 
-    my_thread *current_thread_ptr = ((my_thread *) thread);
-    my_thread current_thread = *((my_thread *) thread);
-    size_t length = current_thread_ptr->m_end_index - current_thread_ptr->m_start_index + 1;
-    char current_sub_string[length + 1];
-    current_sub_string[0] = '\0';
-    /// now lets get to real work and call the desired function
-    strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
-    current_sub_string[length] = '\0';  // Add null terminator
-    //////////////////////////////////////////////////////////
-    decrypt(current_sub_string, our_key);
+//    my_thread *current_thread_ptr = ((my_thread *) thread);
+//    my_thread current_thread = *((my_thread *) thread);
+//    size_t length = current_thread_ptr->m_end_index - current_thread_ptr->m_start_index + 1;
+//    char current_sub_string[length + 1];
+//    current_sub_string[0] = '\0';
+//    /// now lets get to real work and call the desired function
+//    strncpy(current_sub_string, our_string + current_thread.m_start_index, length);
+//    current_sub_string[length] = '\0';  // Add null terminator
+//    //////////////////////////////////////////////////////////
+//    decrypt(current_sub_string, our_key);
+//
+//    strcpy(current_thread_ptr->m_string, current_sub_string);
+//    current_thread_ptr->m_string[length] = '\0';
 
-    strcpy(current_thread_ptr->m_string, current_sub_string);
-    current_thread_ptr->m_string[length] = '\0';
-
-
-}
-
-
-void start_multithreading(char indicator, int key, char *data, int index) {
-    /// lets divide tasks for each thread based on how many chars we have
-    int char_count = 0;
-    char_count = strlen(data); /// length
-    int remainder = 0; /// remainder
-    int chunk_size = char_count / LIST_SIZE;
-    int current_char_count = char_count;
-    int index_counter = 0;
-    if (char_count % LIST_SIZE != 0)
-        remainder = char_count % LIST_SIZE;
     /*
-     * TODO SUSSYYYYYYY
+     *  NEW SOLUTION
+     *
      */
-    for (int i = 0; i < LIST_SIZE; ++i) {
-        if (current_char_count != 0) {
-            thread_list[i].m_is_active = 1; /// set to true
-            thread_list[i].m_start_index = index_counter;
-            index_counter = index_counter + chunk_size;
-            thread_list[i].m_end_index = index_counter - 1; /// we'll -1 each one in a second loop
-            current_char_count -= chunk_size;
-        }
-        if (i == 0) {
-            thread_list[i].m_end_index += remainder;
-            index_counter += remainder;
-            current_char_count -= remainder;
-        }
+
+    /* TODO
+ *  in this step we are getting a thread in which it has a start index and an end index which could be <1024 or even more
+ *  so we need to do our math right and check for both cases
+ */
+    my_thread * current_thread_ptr= (my_thread*)thread;
+    size_t start_index=current_thread_ptr->m_start_index;
+    size_t end_index=current_thread_ptr->m_end_index;
+    int size=end_index-start_index+1;
+    int iterator=start_index;
+    int remainder= size%1024; //could be 0 could be k<1024
+    int k=floor(size/1024); // could be 0 could be time of 1024
+    /// initializing the struct dynamic_string inside our thread
+    dynamic_string dynamic_thread_str =current_thread_ptr->str;
+    init(&dynamic_thread_str);
+    dynamic_thread_str.m_string=(char*) calloc(size + 1, sizeof(char)); /// allocating string same size as for strcat in future
+    //////////////////////////////////////////////////////////
+    char* temp_string=(char*) calloc(1024+1, sizeof(char)); ///TODO FREEEEE 1024+1 for the null pointer.
+    for (int i = 0; i < k; ++i)
+    {
+        /// time to do encrypt/decrypt for each chunk at a time
+        /*
+         * TODO for each chunck out of k we need to :
+         *      1) copy it to a temporary string from the string we got as input
+         *      2) call encrypt/decrypt with that @temp_string (strcpy)
+         *      3) append it to our @thread->str->m_string (srtncat)
+         *
+         */
+        strncpy(temp_string, global_str.m_string + iterator, 1024);
+        iterator+=1024;
+        temp_string[1024]='\0';
+        decrypt(temp_string,our_key);
+        append_string(&current_thread_ptr->str,temp_string);
+        //strncat(current_thread_ptr->str.m_string,temp_string, strlen(temp_string)+1); // +1 for \0
+
+    }
+    /// after all of this there might be a remainder soo .
+    if(remainder>0) {
+        strncpy(temp_string, global_str.m_string + iterator, remainder);
+        temp_string[remainder] = '\0';
+        decrypt(temp_string, our_key);
+        //check(&current_thread_ptr->str);
+        append_string(&current_thread_ptr->str,temp_string); /// TODO check its functionality in worse cases
+        //printf("strlen %d\n", strlen(current_thread_ptr->str.m_string));
+        //printf("index %d", current_thread_ptr->str.m_index);
+        /// TODO in case of cat we need to be cautios and resize our string
+        //strncat(current_thread_ptr->str.m_string, temp_string, remainder + 1);
+        dynamic_thread_str.m_string[end_index] = '\0';
     }
 
-/*
- * TODO based on the char ('e' | 'd') we know whether its Encrypt or Decrypt to call
- * /// so now our thread_list is ready
- */
+}
+void start_multithreading(char indicator, int key, char *str, int index)
+{
+    /*
+     * giving indexes for each thread;
+     */
+    int length= strlen(str); // till \0
+    int total=length;
+    int iterator=0;
+    int remainder=0;
+    int chunk_size=-1;
+    int remaining=-1;
+    if(length%LIST_SIZE!=0) ///not  multiple of 6
+    {
+        /*
+         * 1) might be less than 1024
+         * 2) might be 1024*k + remainder
+         */
+        remainder=length%LIST_SIZE;
+    }
+    total-=remainder;
+    chunk_size=total/LIST_SIZE;
+    remaining=length;// includes the remainder in case it exists.
+    /// the portion for each thread to take.
+    /// regarding the remainder we could give it to last thread or first doesn't really matter.
+    //// once again chunk size could be zero , maybe we should pass only strings with at least 1 char in previous block
+
+    for (int i = 0; i < LIST_SIZE; ++i)
+    {
+        //TODO give indexes for each thread.
+        if(remaining!=remainder) {
+            thread_list[i].m_start_index = iterator;
+            thread_list[i].m_end_index = thread_list[i].m_start_index + chunk_size - 1;
+            iterator += chunk_size;
+            remaining -= chunk_size;
+            thread_list[i].m_is_active=1;
+        }
+    }
+    /// we still have remainder to deal with we add it to the last thread.
+    thread_list[5].m_end_index+=remainder;
+//    /// DONE !
+//    for (int i = 0; i < LIST_SIZE; ++i) {
+//        print_mythread_info(thread_list[i]);
+//    }
+
+
+
+//void start_multithreading(char indicator, int key, char *data, int index) {
+//    /// lets divide tasks for each thread based on how many chars we have
+//    int char_count = 0;
+//    char_count = strlen(data); /// length
+//    int remainder = 0; /// remainder
+//    int chunk_size = char_count / LIST_SIZE;
+//    int current_char_count = char_count;
+//    int index_counter = 0;
+//    if (char_count % LIST_SIZE != 0)
+//        remainder = char_count % LIST_SIZE;
+//    /*
+//     * TODO SUSSYYYYYYY
+//     */
+//    for (int i = 0; i < LIST_SIZE; ++i) {
+//        if (current_char_count != 0) {
+//            thread_list[i].m_is_active = 1; /// set to true
+//            thread_list[i].m_start_index = index_counter;
+//            index_counter = index_counter + chunk_size;
+//            thread_list[i].m_end_index = index_counter - 1; /// we'll -1 each one in a second loop
+//            current_char_count -= chunk_size;
+//        }
+//        if (i == 0) {
+//            thread_list[i].m_end_index += remainder;
+//            index_counter += remainder;
+//            current_char_count -= remainder;
+//        }
+//    }
+//
+///*
+// * TODO based on the char ('e' | 'd') we know whether its Encrypt or Decrypt to call
+// * /// so now our thread_list is ready
     if (indicator == 'e') {
         for (int i = 0; i < LIST_SIZE; ++i) {
 
@@ -194,6 +364,7 @@ void start_multithreading(char indicator, int key, char *data, int index) {
     }
 }
 
+
 ////////////////MAIN//////////////////
 /////////////////////////////////////
 int main(int argc, char *argv[])
@@ -203,6 +374,8 @@ int main(int argc, char *argv[])
  */
 
 {
+    init(&final_str);
+    init(&global_str);
     ////// section for complexity in ms
     clock_t start_time, end_time;
     double execution_time;
@@ -262,18 +435,17 @@ int main(int argc, char *argv[])
 //        counter++;
 //    }
     //////////// INIT //////////////////
-    dynamic_string str;
-    init(&str);
+    //dynamic_string str;
 
     //TODO alternate version of while for our new dynamic string.
     while (((c = getchar()) != input_indicator))
     { /// stops only in case we encounter an indicator.
         counter++;
         //data[counter] = c;
-        append(&str,(char) c);
+        append(&global_str,(char) c);
         /*
          *      TODO it works !!!, once again remember
-         *          1) m_size means allocated size
+         *          1) m_alloc_size means allocated size
          *          2) use strlen() to tell whats the real size till last letter.
          *          3) strlen() doesnt include the \0 in its count.
          */
@@ -310,7 +482,7 @@ int main(int argc, char *argv[])
         if (action[1] == 'e') {
 
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
-            start_multithreading('e', key, lastData, counter);
+            start_multithreading('e', key, global_str.m_string, counter);
             if (dev_mode) {
                 printf("\nour original string is :\n%s\n", lastData);
                 encrypt(lastData, key);
@@ -319,7 +491,7 @@ int main(int argc, char *argv[])
 
         } else {// TODO "-d" as for Decrypt
             // TODO here we need to call pthread_t_create but before we need to divide the job on threads
-            start_multithreading('d', key, lastData, counter);
+            start_multithreading('d', key, global_str.m_string, counter);
             if (dev_mode) {
                 printf("\nour original string is :\n%s\n", lastData);
                 decrypt(lastData, key);
@@ -341,10 +513,18 @@ int main(int argc, char *argv[])
         for (int i = 0; i < LIST_SIZE; ++i) {
             //TODO make sure each thread string is null terminated and doesnt contain garbage.
             //  we dont want to see garbage characters which we aren't interested in :'(
-            strcat(result_string, thread_list[i].m_string);
+            //strcat(result_string, thread_list[i].m_string);
+            append_string(&final_str,thread_list[i].str.m_string);
+            //print_mythread_info(thread_list[i]);
             //printf(" string of thread[%d] =%s", i, thread_list[i].m_string);
 
         }
+        /// TODO DELETE
+        printf("size of first string :%ld",strlen(global_str.m_string));
+        printf("\n%s",global_str.m_string);
+
+        printf("\nsize of final string :%ld",strlen(final_str.m_string));
+        printf("\n%s",final_str.m_string);
         /*
          * Printing the final result
          */
